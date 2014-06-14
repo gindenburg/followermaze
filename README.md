@@ -1,9 +1,7 @@
-followermaze
-============
+followermaze - the code challange
+===============================================================================
+- see ./blog.md for project log
+- see ./spec/instructions.md for project specification
+- see ./testsuite for the test application provided by the customer
+- see ./code for build instructions and source code
 
-12.06.2014
-- got the project, created a repository on github, analysed the specification, sent a few questions to the customer.
-- will implement in C++ for GNU/Linux
-- started to think about design
-
-TODO: use make or cmake?
