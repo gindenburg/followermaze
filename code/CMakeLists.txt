@@ -6,6 +6,7 @@ set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
 set(UNIT_TESTS_RUNNER ${PROJECT_NAME}_run_unit_tests)
 
 aux_source_directory(./tests/unit TSTSRC_LIST)
+include_directories(./src)
 add_executable(${UNIT_TESTS_RUNNER} ${TSTSRC_LIST})
 target_link_libraries(${UNIT_TESTS_RUNNER} libunittest++.a)
 

@@ -26,6 +26,6 @@
  *      See: http://unittest-cpp.sourceforge.net/UnitTest++.html
  */
 
-#ifndef __TEST_H__
+#ifndef TEST_H
 #include <unittest++/UnitTest++.h>
-#endif
+#endif // TEST_H
