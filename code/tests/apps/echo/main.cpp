@@ -16,11 +16,20 @@ int main()
         {
             string message = eventSource->receive();
             cout << message.c_str() << endl;
+            eventSource->send("Got a message: ");
+            eventSource->send(message);
         }
     }
     catch (Connection::Exception e)
     {
-        cout << e.what() << ": " << e.getErr() << endl;
+        if (e.getErr() == Connection::Exception::ErrClientDisconnect)
+        {
+            cout << "Client disconnected. Shutting down." << endl;
+        }
+        else
+        {
+            cout << e.what() << ": " << e.getErr() << ". Shutting down." << endl;
+        }
     }
 
     return 0;

@@ -16,7 +16,7 @@ Connection::Connection(int portno)
     int sockfd = socket(AF_INET, SOCK_STREAM, 0);
     if (sockfd < 0)
     {
-        throw Exception();
+        throw Exception(errno);
     }
 
     /* Initialize socket structure */
@@ -27,20 +27,18 @@ Connection::Connection(int portno)
     serverAddr.sin_addr.s_addr = INADDR_ANY;
     serverAddr.sin_port = htons(portno);
 
-    /* Now bind the host address using bind() call.*/
+    // Now bind the host address using bind() call.
     if (0 != bind(sockfd, (struct sockaddr *) &serverAddr, sizeof(serverAddr)))
     {
-        close(sockfd);
-        throw Exception();
+        handleError(errno);
     }
 
     if (0 != listen(sockfd, 5))
     {
-        close(sockfd);
-        throw Exception();
+        handleError(errno);
     }
 
-    // We've created a socket and are listening for a connection
+    // We've created a socket and are listening for a connection.
     m_handle = sockfd;
     m_listening = true;
 }
@@ -64,7 +62,7 @@ Connection* Connection::accept()
     if (!m_listening)
     {
         // Application logic error - we're not listening for clients.
-        throw Exception();
+        throw Exception(Exception::ErrConnectionState);
     }
 
     Connection* clientConnection = new Connection();
@@ -86,10 +84,10 @@ Connection* Connection::accept()
 
 string Connection::receive()
 {
-    if (m_listening)
+    if (m_listening || m_handle < 0)
     {
         // Application logic error - we're not connected to a client.
-        throw Exception();
+        throw Exception(Exception::ErrConnectionState);
     }
 
     ssize_t bytesRecieved;
@@ -99,10 +97,7 @@ string Connection::receive()
     if (bytesRecieved <= 0)
     {
         // Client closed the connection or some error has happened.
-        close(m_handle);
-        m_handle = -1;
-
-        // TODO: better error handling (e.g. throw on error)?
+        handleError(bytesRecieved < 0 ? errno : Exception::ErrClientDisconnect);
     }
 
     incomingDataBuffer[bytesRecieved] = 0; // zterminate
@@ -111,10 +106,35 @@ string Connection::receive()
 
 void Connection::send(const string &message)
 {
-    throw Exception();
+    if (m_listening || m_handle < 0)
+    {
+        // Application logic error - we're not connected to a client.
+        throw Exception(Exception::ErrConnectionState);
+    }
+
+    if (message.empty())
+    {
+        return;
+    }
+
+    if (write(m_handle, message.c_str(), message.length()) <= 0)
+    {
+        // Client closed the connection or some error has happened.
+        // Report actual error or 0 in case socket has been closed by the client.
+        handleError(errno == EPIPE ? Exception::ErrClientDisconnect : errno);
+    }
 }
 
 bool Connection::isAlive() const
 {
     return m_listening || m_handle >= 0;
+}
+
+void Connection::handleError(int err)
+{
+    close(m_handle);
+    m_handle = -1;
+
+    // Report actual error or 0 in case socket has been closed by the client.
+    throw Exception(err);
 }

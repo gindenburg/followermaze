@@ -23,7 +23,12 @@ public:
     class Exception : public exception
     {
     public:
-        Exception(int err = 0) : m_err(err) {}
+        enum {
+            ErrConnectionState = 10000,
+            ErrClientDisconnect
+        };
+    public:
+        Exception(int err) : m_err(err) {}
         virtual const char* what() const throw() { return "Connection::Exception"; }
         int getErr() const { return m_err; }
     protected:
@@ -51,6 +56,10 @@ public:
 
     // Connection is alive if it is listening for connection or is connected to a client.
     virtual bool isAlive() const;
+
+private:
+    // Invalidate connection, cleanup, throw.
+    void handleError(int err);
 
 private:
     Handle m_handle;  // I/O handle.
