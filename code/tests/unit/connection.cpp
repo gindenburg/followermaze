@@ -1,6 +1,5 @@
 #include "test.h" // Brings in the UnitTest++ framework
-
-#include "../../src/connection.cpp"
+#include "connection.h"
 
 TEST(constructConnection)
 {

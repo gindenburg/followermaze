@@ -5,6 +5,7 @@ set(UNIT_TESTS_RUNNER ${PROJECT_NAME}_run_unit_tests)
 
 set(SRC_LIST
     test.h
+    ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
     connection.cpp
     sanity_check.cpp
     main.cpp
