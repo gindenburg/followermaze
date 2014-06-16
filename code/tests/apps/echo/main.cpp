@@ -15,8 +15,8 @@ int main()
         while (eventSource->isAlive())
         {
             string message = eventSource->receive();
-            cout << message.c_str() << endl;
-            eventSource->send("Got a message: ");
+            cout << "Received a message: " << message.c_str() << flush;
+            eventSource->send("Ack message: ");
             eventSource->send(message);
         }
     }

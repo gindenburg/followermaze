@@ -1,8 +1,8 @@
 /*
  * This file describes Connection interface.
  * Connection wraps an OS specific TCP/IP network I/O resource represented
- * by a Handle. It provides an interface to exchange information through this
- * resource in blocking manner.
+ * by a Handle. It provides a way to exchange information through this
+ * resource synchronously or asynchronously (defined at construction time).
  */
 
 #ifndef CONNECTION_H
@@ -19,13 +19,15 @@ typedef int Handle;
 
 class Connection
 {
+    friend class ConnectionManager;
+
 public:
     class Exception : public exception
     {
     public:
         enum {
-            ErrConnectionState = 10000,
-            ErrClientDisconnect
+            ErrAppLogic = 10000, // Connection used in an inconsistent way.
+            ErrClientDisconnect  // Client closed the connection.
         };
     public:
         Exception(int err) : m_err(err) {}
@@ -36,8 +38,10 @@ public:
     };
 
 public:
-    // Creates server connection which listens on the port
-    Connection(int portno);
+    // Creates server connection which listens on the port.
+    // If async creates non-blocking connection.
+    // Will throw on initialization error.
+    Connection(int portno, bool async = false);
     virtual ~Connection();
 
 protected:
@@ -45,13 +49,22 @@ protected:
     Connection();
 
 public:
-    // If listening, accepts connection, creates a new one and returns it. Will block until a client connects.
-    virtual Connection* accept();
+    // Will throw if not listening. Otherwise accepts connection, creates a new
+    // instance and returns it. If async will return a non-blocking connection.
+    // If blocking will block until a client connects.
+    // If non-blocking will throw if attempt is made to accept connection while
+    // no client is queueing.
+    virtual Connection* accept(bool async = false);
 
-    // If connected, return received message. Will block until there is data.
+    // If connected returns received message.
+    // If blocking will block until there is data.
+    // If non-blocking will throw if attempt to receive is made without data waiting.
     virtual string receive();
 
     // Sends the message.
+    // If blocking will block until data has been transferred to the transport layer.
+    // If non-blocking will throw if attempt to send data is made while transport
+    // layer is not accepting writes.
     virtual void send(const string &message);
 
     // Connection is alive if it is listening for connection or is connected to a client.
