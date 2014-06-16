@@ -1,6 +1,9 @@
 followermaze
 ===============================================================================
 
+15.04.2012
+- implemented Connection as a wrapper for clent and server sockets
+
 14.06.2014
 - set up dev environment: Ubuntu x86_64, g++, make, cmake, UnitTest++
 - will use Qt Creator as IDE
