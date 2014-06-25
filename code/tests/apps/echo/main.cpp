@@ -4,6 +4,7 @@
 #include "connection.h"
 
 using namespace std;
+using namespace followermaze;
 
 int main()
 {
@@ -12,7 +13,7 @@ int main()
         Connection eventSourceListener(9090);
         auto_ptr<Connection> eventSource(eventSourceListener.accept());
 
-        while (eventSource->isAlive())
+        for (;;)
         {
             string message = eventSource->receive();
             cout << "Received a message: " << message.c_str() << flush;

@@ -1,6 +1,8 @@
 #include "test.h" // Brings in the UnitTest++ framework
 #include "connection.h"
 
+using namespace followermaze;
+
 TEST(constructConnection)
 {
     Connection conn(9090);
@@ -26,18 +28,6 @@ TEST(serveOnSamePortTwice)
     {
         Connection conn(9090);
     }
-}
-
-TEST(constructedIsAlive)
-{
-    Connection conn(9090);
-    CHECK(conn.isAlive());
-}
-
-TEST(constructedAsyncIsAlive)
-{
-    Connection conn(9090, true);
-    CHECK(conn.isAlive());
 }
 
 TEST(receiveUnacceptedFails)
@@ -67,5 +57,14 @@ TEST(receiveUnacceptedAsyncFails)
 TEST(sendUnacceptedAsyncFails)
 {
     Connection conn(9090, true);
+    CHECK_THROW(conn.send("bla"), Connection::Exception);
+}
+
+TEST(invalidMethodInvocationFails)
+{
+    Connection conn;
+    CHECK_EQUAL(conn.getHandle(), INVALID_HANDLE);
+    CHECK_THROW(conn.accept(), Connection::Exception);
+    CHECK_THROW(conn.receive(), Connection::Exception);
     CHECK_THROW(conn.send("bla"), Connection::Exception);
 }

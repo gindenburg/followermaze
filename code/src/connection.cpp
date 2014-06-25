@@ -11,10 +11,14 @@
 #include <errno.h>
 #include <fcntl.h>
 
+namespace followermaze
+{
+
 Connection::Connection(int portno, bool async)
 {
     // Create socket (we assume TCP/IP with IPv4 for simplicity)
-    m_handle = socket(AF_INET, SOCK_STREAM, 0);
+    int type = async ? (SOCK_STREAM | SOCK_NONBLOCK) : SOCK_STREAM;
+    m_handle = socket(AF_INET, type, 0);
     if (m_handle < 0)
     {
         throw Exception(errno);
@@ -31,38 +35,20 @@ Connection::Connection(int portno, bool async)
     // Now bind the host address using bind() call.
     if (0 != bind(m_handle, (struct sockaddr *) &serverAddr, sizeof(serverAddr)))
     {
-        handleError(errno);
-    }
-
-    if (async)
-    {
-        // Set socket to non-blocking
-        int flags = 0;
-
-        if ((flags = fcntl(m_handle, F_GETFL, 0)) < 0)
-        {
-            handleError(errno);
-        }
-
-        if (fcntl(m_handle, F_SETFL, flags | O_NONBLOCK) < 0)
-        {
-            handleError(errno);
-        }
+        close(m_handle);
+        throw Exception(errno);
     }
 
     if (0 != listen(m_handle, 5))
     {
-        handleError(errno);
+        close(m_handle);
+        throw Exception(errno);
     }
-
-    // We've created a socket and are listening for a connection.
-    m_listening = true;
 }
 
 Connection::Connection()
 {
     m_handle = -1;
-    m_listening = false;
 }
 
 Connection::~Connection()
@@ -75,12 +61,6 @@ Connection::~Connection()
 
 Connection* Connection::accept(bool async)
 {
-    if (!m_listening)
-    {
-        // Application logic error - we're not listening for clients.
-        throw Exception(Exception::ErrAppLogic);
-    }
-
     Connection* clientConnection = new Connection();
 
     struct sockaddr clientAddr;
@@ -101,20 +81,14 @@ Connection* Connection::accept(bool async)
 
 string Connection::receive()
 {
-    if (m_listening || m_handle < 0)
-    {
-        // Application logic error - we're not connected to a client.
-        throw Exception(Exception::ErrAppLogic);
-    }
-
     ssize_t bytesRecieved;
     char incomingDataBuffer[4096]; // TODO: make it server configuration parameter?
     bytesRecieved = recv(m_handle, incomingDataBuffer, 4096, 0);
 
     if (bytesRecieved <= 0)
     {
-        // Client closed the connection or some error has happened.
-        handleError(bytesRecieved < 0 ? errno : Exception::ErrClientDisconnect);
+        // Client closted the connection or some error has happened.
+        throw Exception(bytesRecieved < 0 ? errno : Exception::ErrClientDisconnect);
     }
 
     incomingDataBuffer[bytesRecieved] = 0; // zterminate
@@ -123,12 +97,6 @@ string Connection::receive()
 
 void Connection::send(const string &message)
 {
-    if (m_listening || m_handle < 0)
-    {
-        // Application logic error - we're not connected to a client.
-        throw Exception(Exception::ErrAppLogic);
-    }
-
     if (message.empty())
     {
         return;
@@ -138,21 +106,13 @@ void Connection::send(const string &message)
     if (::send(m_handle, message.c_str(), message.length(), flags) < 0)
     {
         // Client closed the connection or some error has happened.
-        // Report actual error or 0 in case socket has been closed by the client.
-        handleError(errno == EPIPE ? Exception::ErrClientDisconnect : errno);
+        throw Exception(errno == EPIPE ? Exception::ErrClientDisconnect : errno);
     }
 }
 
-bool Connection::isAlive() const
+Handle Connection::getHandle() const
 {
-    return m_listening || m_handle >= 0;
+    return m_handle;
 }
 
-void Connection::handleError(int err)
-{
-    close(m_handle);
-    m_handle = -1;
-
-    // Report actual error or 0 in case socket has been closed by the client.
-    throw Exception(err);
-}
+} // namespace followermaze

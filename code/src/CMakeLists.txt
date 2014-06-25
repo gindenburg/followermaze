@@ -3,6 +3,7 @@
 #
 # List the source files
 set(SRC_LIST
+    exception.h
     connection.h
     connection.cpp
     main.cpp

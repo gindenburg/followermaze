@@ -9,32 +9,30 @@
 #define CONNECTION_H
 
 #include <string>
-#include <exception>
+#include "exception.h"
 
 using namespace std;
 
-// Let's define Handle as int. This will work nicely on POSIX platforms.
-// If we wanted this to be cross-platfom we would have to re-define it.
+namespace followermaze
+{
+
 typedef int Handle;
+static const int INVALID_HANDLE = -1;
 
 class Connection
 {
-    friend class ConnectionManager;
-
 public:
-    class Exception : public exception
+    class Exception : public BaseException
     {
     public:
-        enum {
-            ErrAppLogic = 10000, // Connection used in an inconsistent way.
-            ErrClientDisconnect  // Client closed the connection.
+        enum
+        {
+            ErrClientDisconnect = BaseException::ErrGeneric + 1 // Client closed the connection.
         };
+
     public:
-        Exception(int err) : m_err(err) {}
+        Exception(int err = BaseException::ErrGeneric) : BaseException(err) {}
         virtual const char* what() const throw() { return "Connection::Exception"; }
-        int getErr() const { return m_err; }
-    protected:
-        int m_err;
     };
 
 public:
@@ -42,11 +40,13 @@ public:
     // If async creates non-blocking connection.
     // Will throw on initialization error.
     Connection(int portno, bool async = false);
+    // Creates invalid connection. Used by accept().
+    Connection();
     virtual ~Connection();
 
-protected:
-    // Creates a client connection to return by accept()
-    Connection();
+private:
+    Connection(const Connection&);
+    Connection& operator=(const Connection&);
 
 public:
     // Will throw if not listening. Otherwise accepts connection, creates a new
@@ -67,16 +67,12 @@ public:
     // layer is not accepting writes.
     virtual void send(const string &message);
 
-    // Connection is alive if it is listening for connection or is connected to a client.
-    virtual bool isAlive() const;
-
-private:
-    // Invalidate connection, cleanup, throw.
-    void handleError(int err);
+    Handle getHandle() const;
 
 private:
     Handle m_handle;  // I/O handle.
-    bool m_listening; // Listening for connection.
 };
+
+} // namespace followermaze
 
 #endif // CONNECTION_H
