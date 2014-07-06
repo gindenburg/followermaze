@@ -9,7 +9,6 @@ set(APP_NAME "multiecho")
 set(SRC_LIST
     ${FOLLOWERMAZE_SOURCE_PATH}/client.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/eventhandler.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/reactor.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/server.cpp

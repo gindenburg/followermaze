@@ -47,7 +47,6 @@ protected:
     static const unsigned int MAX_FDS = 128;
     struct pollfd m_pollfds[MAX_FDS];
     EventHandler *m_handlers[MAX_FDS];
-
 };
 
 } // namespace followermaze

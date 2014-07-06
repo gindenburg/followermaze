@@ -1,5 +1,7 @@
 #include <assert.h>
 #include "client.h"
+#include "reactor.h"
+#include "engine.h"
 #include "logger.h"
 
 namespace followermaze
@@ -103,40 +105,6 @@ void Admin::doHandleInput(int hint)
         Logger::getInstance().message("Got stop command.");
         throw Reactor::Exception(Reactor::Exception::ErrStop);
     }
-}
-
-EventSource::EventSource(auto_ptr<Connection> conn, Reactor &reactor) :
-    Client(conn, reactor)
-{
-}
-
-EventSource::~EventSource()
-{
-}
-
-void EventSource::doHandleInput(int hint)
-{
-}
-
-UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor) :
-    Client(conn, reactor)
-{
-}
-
-UserClient::~UserClient()
-{
-}
-
-void UserClient::doHandleInput(int hint)
-{
-    m_message += m_conn->receive();
-    m_reactor.resetHandler(hint, (Reactor::EvntWrite | Reactor::EvntRead));
-}
-
-void UserClient::doHandleOutput(int hint)
-{
-    m_conn->send("message");
-    m_reactor.resetHandler(hint, Reactor::EvntRead);
 }
 
 } // namespace followermaze

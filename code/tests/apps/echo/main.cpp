@@ -8,6 +8,10 @@ using namespace followermaze;
 
 int main()
 {
+    cout << "Size of int is " << sizeof(int) << endl;
+    cout << "Size of long is " << sizeof(long) << endl;
+    cout << "Size of long long is " << sizeof(long long) << endl;
+
     try
     {
         Connection eventSourceListener(9090);

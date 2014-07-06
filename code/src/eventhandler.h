@@ -1,3 +1,6 @@
+/* This file describes EventHandler interface (part of the  Reactor pattern).
+ */
+
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 

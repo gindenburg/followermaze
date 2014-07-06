@@ -1,7 +1,11 @@
 followermaze concerns/TODOs
 ===============================================================================
 - specification is confusing sometimes
-  - no clear specification of "current follower". Guessing :-)
+  - no clear specification of "current follower". Guessing that this is a user
+    mentioned in an 'F' event as 'From User ID'.
+  - not clear what to do if an 'F' message came from a user which has not
+    connected yet. Ignore or make a follower anyway and wait until it connects?
+    Guessing the latter.
   - "The *event source* **connects on port 9090**", "The many *user clients* 
     will **connect on port 9099**", "**clientListenerPort** - Default: 9090"
     Is it legit to connect both event source and clients on the same port?

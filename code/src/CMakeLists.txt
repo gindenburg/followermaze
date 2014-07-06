@@ -3,16 +3,19 @@
 #
 # List the source files
 set(SRC_LIST
-    exception.h
-    logger.h
-    logger.cpp
-    connection.h
-    connection.cpp
+    acceptor.h
+    engine.h
+    engine.cpp
     eventhandler.h
-    eventhandler.cpp
+    exception.h
     client.h
     client.cpp
-    acceptor.h
+    connection.h
+    connection.cpp
+    logger.h
+    logger.cpp
+    protocol.h
+    protocol.cpp
     reactor.h
     reactor.cpp
     server.h

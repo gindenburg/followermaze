@@ -45,6 +45,7 @@ public:
     virtual ~Connection();
 
 private:
+    // Make non-copyable.
     Connection(const Connection&);
     Connection& operator=(const Connection&);
 
@@ -58,7 +59,7 @@ public:
 
     // If connected returns received message.
     // If blocking will block until there is data.
-    // If non-blocking will throw if attempt to receive is made without data waiting.
+    // If non-blocking will throw if attempt to receive is made with no data waiting.
     virtual string receive();
 
     // Sends the message.
@@ -67,6 +68,7 @@ public:
     // layer is not accepting writes.
     virtual void send(const string &message);
 
+    // Getter for the handle.
     Handle getHandle() const;
 
 private:
