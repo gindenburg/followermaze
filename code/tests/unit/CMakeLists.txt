@@ -5,8 +5,15 @@ set(UNIT_TESTS_RUNNER ${PROJECT_NAME}_run_unit_tests)
 
 set(SRC_LIST
     test.h
+    ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/client.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/reactor.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/engine.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/protocol.cpp
     connection.cpp
+    protocol.cpp
+    engine.cpp
     sanity_check.cpp
     main.cpp
 )

@@ -30,7 +30,7 @@ struct Event
     {
         bool operator() (const Event *lhs, const Event *rhs) const
         {
-            return lhs->m_seqnum < rhs->m_seqnum;
+            return lhs->m_seqnum > rhs->m_seqnum;
         }
     };
 };
@@ -46,7 +46,6 @@ protected:
     virtual ~EventSource();
 
 protected:
-    Engine &m_engine;
     string m_buffer;
 };
 
@@ -72,7 +71,7 @@ public:
     virtual void handleClose(int hint);
     virtual void handleError(int hint);
 
-    void send(const string& message);
+    virtual void send(const string& message);
 
 protected:
     virtual void doHandleInput(int hint);
@@ -82,7 +81,6 @@ protected:
     virtual ~UserClient();
 
 protected:
-    Engine &m_engine;
     string m_messageIn;
     string m_messageOut;
     long m_userId;
@@ -97,6 +95,7 @@ struct Parser
     static long parseLong(const string &str);
     static void parseEvent(Event &event);
     static bool isValidEvent(const Event &event);
+    static void encodeMessage(const string& payload, string &message);
 
     static const long FIRST_SEQNUM = 1l;
     static const long INVALID_LONG = -1l;

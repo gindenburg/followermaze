@@ -24,7 +24,7 @@ class Engine;
 class Client : public EventHandler
 {
 public:
-    Client(auto_ptr<Connection> conn, Reactor &reactor);
+    Client(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine);
 
     // Implement EventHandler  interface.
     virtual Handle getHandle();
@@ -35,30 +35,31 @@ public:
 
 protected:
     // handleInput and handleOutput are implemented as template methods
-    // which define error handling around doHandleInput call which can
-    // be overridden by the subclasses do the processing.
+    // which define error handling around doHandleInput/doHandleOutput
+    // which should be overridden by the subclasses to do the processing.
     virtual void doHandleInput(int hint);
     virtual void doHandleOutput(int hint);
 
     // Unregister itself from the Reactor and dispose of itself.
-    void disconnect(int hint);
+    void dispose(int hint);
 
 protected:
     // Ensure dynamic allocation.
     virtual ~Client();
 
 protected:
-    auto_ptr<Connection> m_conn;
+    auto_ptr<Connection> m_connection;
     Reactor &m_reactor;
+    Engine &m_engine;
 };
 
 class Admin : public Client
 {
 public:
-    Admin(auto_ptr<Connection> conn, Reactor &reactor);
+    Admin(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine);
 
 protected:
-    // Expect "stop". On receiving stop Reactor.
+    // Expect "stop". Stop Reactor if received.
     virtual void doHandleInput(int hint);
 
 protected:

@@ -36,7 +36,7 @@ protected:
     void handlePrivate(const Event& event);
     void handleStatusUpdate(const Event& event);
     User* addNewUser(long id);
-    void notifyUser(User *user, const string &message);
+    void notifyUser(User *user, const string &payload);
     bool isBlankUser(const User& user);
 
 protected:

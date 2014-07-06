@@ -1,3 +1,4 @@
+#include "engine.h"
 #include "client.h"
 #include "server.h"
 #include "acceptor.h"
@@ -9,12 +10,15 @@ using namespace followermaze;
 class EchoClient : public Client
 {
 public:
-    EchoClient(auto_ptr<Connection> conn, Reactor &reactor) : Client(conn, reactor) {}
+    EchoClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
+        Client(conn, reactor, engine)
+    {
+    }
 
 protected:
     virtual void doHandleInput(int hint)
     {
-        m_message += m_conn->receive();
+        m_message += m_connection->receive();
         m_reactor.resetHandler(hint, Reactor::EvntWrite);
     }
 
@@ -22,7 +26,7 @@ protected:
     {
         string message("echo says: ");
         message += m_message;
-        m_conn->send(message);
+        m_connection->send(message);
         m_reactor.resetHandler(hint, Reactor::EvntRead);
         m_message.clear();
     }
@@ -40,7 +44,6 @@ public:
     class Config
     {
     public:
-        int m_eventPort;
         int m_userPort;
         int m_adminPort;
     };
@@ -51,17 +54,18 @@ public:
 
     virtual void initReactor()
     {
-        auto_ptr<EventHandler> adminAcceptor(new Acceptor<Admin>(m_config.m_adminPort, m_reactor));
+        auto_ptr<EventHandler> adminAcceptor(new Acceptor<Admin>(m_config.m_adminPort, m_reactor, m_engine));
         m_reactor.addHandler(adminAcceptor, Reactor::EvntAccept);
         Logger::getInstance().message("Listening for admins on port ", m_config.m_adminPort);
 
-        auto_ptr<EventHandler> userAcceptor(new Acceptor<EchoClient>(m_config.m_userPort, m_reactor));
+        auto_ptr<EventHandler> userAcceptor(new Acceptor<EchoClient>(m_config.m_userPort, m_reactor, m_engine));
         m_reactor.addHandler(userAcceptor, Reactor::EvntAccept);
         Logger::getInstance().message("Listening for users on port ", m_config.m_userPort);
     }
 
 protected:
     Config  m_config;
+    Engine m_engine;
 };
 
 int main()

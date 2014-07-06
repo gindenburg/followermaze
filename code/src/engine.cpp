@@ -27,7 +27,9 @@ Engine::~Engine()
     }
 
     UserMap::iterator userIt = m_users.begin();
-    while (userIt != m_users.end())
+    for (UserMap::iterator userIt = m_users.begin();
+                           userIt != m_users.end();
+                           ++userIt)
     {
         User *user = userIt->second;
         userIt->second = NULL;
@@ -54,11 +56,16 @@ void Engine::handleEvents(string& events)
         }
     }
 
-    // If the remainder of the input string is not a message return it so the
-    // caller has a chance to complete the message and try again.
     if (start != string::npos)
     {
+        // Remainder of the input string is not a message. Return it so the
+        // caller has a chance to complete the message and try again.
         events = events.substr(start);
+    }
+    else
+    {
+        // All events consumed.
+        events.clear();
     }
 
     // Process events in seqnum order.
@@ -264,9 +271,12 @@ User* Engine::addNewUser(long id)
     return newUser.release();
 }
 
-void Engine::notifyUser(User *user, const string &message)
+void Engine::notifyUser(User *user, const string &payload)
 {
     assert(user != NULL);
+
+    string message;
+    Parser::encodeMessage(payload, message);
 
     for (ClientList::const_iterator clientIt = user->m_clients.begin();
                                     clientIt != user->m_clients.end();

@@ -11,15 +11,17 @@ Client::~Client()
 {
 }
 
-Client::Client(auto_ptr<Connection> conn, Reactor &reactor) :
-    m_conn(conn), m_reactor(reactor)
+Client::Client(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
+    m_connection(conn),
+    m_reactor(reactor),
+    m_engine(engine)
 {
-    assert(m_conn.get() != NULL);
+    assert(m_connection.get() != NULL);
 }
 
 Handle Client::getHandle()
 {
-    return m_conn->getHandle();
+    return m_connection->getHandle();
 }
 
 void Client::handleInput(int hint)
@@ -32,7 +34,7 @@ void Client::handleInput(int hint)
     {
         if (e.getErr() == Connection::Exception::ErrClientDisconnect)
         {
-            disconnect(hint);
+            dispose(hint);
         }
         else
         {
@@ -51,7 +53,7 @@ void Client::handleOutput(int hint)
     {
         if (e.getErr() == Connection::Exception::ErrClientDisconnect)
         {
-            disconnect(hint);
+            dispose(hint);
         }
         else
         {
@@ -62,13 +64,13 @@ void Client::handleOutput(int hint)
 
 void Client::handleClose(int hint)
 {
-    disconnect(hint);
+    dispose(hint);
 }
 
 void Client::handleError(int hint)
 {
     Logger::getInstance().message("Client error.");
-    disconnect(hint);
+    dispose(hint);
 }
 
 void Client::doHandleInput(int hint)
@@ -79,7 +81,7 @@ void Client::doHandleOutput(int hint)
 {
 }
 
-void Client::disconnect(int hint)
+void Client::dispose(int hint)
 {
     EventHandler* self = m_reactor.detouchHandler(hint);
     assert(self == (EventHandler*)this);
@@ -87,8 +89,8 @@ void Client::disconnect(int hint)
     Logger::getInstance().message("Client disconnected.");
 }
 
-Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor) :
-    Client(conn, reactor)
+Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
+    Client(conn, reactor, engine)
 {
 }
 
@@ -98,7 +100,7 @@ Admin::~Admin()
 
 void Admin::doHandleInput(int hint)
 {
-    string command = m_conn->receive();
+    string command = m_connection->receive();
 
     if (command.compare(0, 4, "stop") == 0)
     {

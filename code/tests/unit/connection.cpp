@@ -3,23 +3,23 @@
 
 using namespace followermaze;
 
-TEST(constructConnection)
+TEST(ConstructConnection)
 {
     Connection conn(9090);
 }
 
-TEST(constructAsyncConnection)
+TEST(ConstructAsyncConnection)
 {
     Connection conn(9090, true);
 }
 
-TEST(failToServeOnSamePort)
+TEST(FailToServeOnSamePort)
 {
     Connection conn(9090);
     CHECK_THROW(Connection conn1(9090), Connection::Exception);
 }
 
-TEST(serveOnSamePortTwice)
+TEST(ServeOnSamePortTwice)
 {
     {
         Connection conn(9090);
@@ -30,37 +30,37 @@ TEST(serveOnSamePortTwice)
     }
 }
 
-TEST(receiveUnacceptedFails)
+TEST(ReceiveUnacceptedFails)
 {
     Connection conn(9090);
     CHECK_THROW(conn.receive(), Connection::Exception);
 }
 
-TEST(sendUnacceptedFails)
+TEST(SendUnacceptedFails)
 {
     Connection conn(9090);
     CHECK_THROW(conn.send("bla"), Connection::Exception);
 }
 
-TEST(acceptAsyncFails)
+TEST(AcceptAsyncFails)
 {
     Connection conn(9090, true);
     CHECK_THROW(conn.accept(), Connection::Exception);
 }
 
-TEST(receiveUnacceptedAsyncFails)
+TEST(ReceiveUnacceptedAsyncFails)
 {
     Connection conn(9090, true);
     CHECK_THROW(conn.receive(), Connection::Exception);
 }
 
-TEST(sendUnacceptedAsyncFails)
+TEST(SendUnacceptedAsyncFails)
 {
     Connection conn(9090, true);
     CHECK_THROW(conn.send("bla"), Connection::Exception);
 }
 
-TEST(invalidMethodInvocationFails)
+TEST(InvalidMethodInvocationFails)
 {
     Connection conn;
     CHECK_EQUAL(conn.getHandle(), INVALID_HANDLE);

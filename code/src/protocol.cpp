@@ -4,6 +4,7 @@
 #include "protocol.h"
 #include "reactor.h"
 #include "engine.h"
+#include "logger.h"
 
 namespace followermaze
 {
@@ -14,8 +15,7 @@ namespace Protocol
 /*----------------------------------------------------------------------------*/
 
 EventSource::EventSource(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor),
-    m_engine(engine)
+    Client(conn, reactor, engine)
 {
 }
 
@@ -25,15 +25,14 @@ EventSource::~EventSource()
 
 void EventSource::doHandleInput(int /*hint*/)
 {
-    m_buffer += m_conn->receive();
+    m_buffer += m_connection->receive();
     m_engine.handleEvents(m_buffer);
 }
 
 /*----------------------------------------------------------------------------*/
 
 UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor),
-    m_engine(engine),
+    Client(conn, reactor, engine),
     m_userId(Parser::INVALID_LONG),
     m_hint(-1)
 {
@@ -41,7 +40,7 @@ UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engi
 
 void UserClient::send(const string& message)
 {
-    m_messageOut = message;
+    m_messageOut += message;
     m_reactor.resetHandler(m_hint, Reactor::EvntWrite);
 }
 
@@ -51,14 +50,18 @@ UserClient::~UserClient()
 
 void UserClient::doHandleInput(int hint)
 {
-    m_messageIn += m_conn->receive();
-    m_userId = m_engine.registerUser(this, m_messageIn);
-    m_hint = hint;
+    if (m_userId == Parser::INVALID_LONG)
+    {
+        m_messageIn += m_connection->receive();
+        m_userId = m_engine.registerUser(this, m_messageIn);
+        m_hint = hint;
+    }
 }
 
 void UserClient::doHandleOutput(int hint)
 {
-    m_conn->send(m_messageOut);
+    m_connection->send(m_messageOut);
+    m_messageOut.clear();
     m_reactor.resetHandler(hint, Reactor::EvntRead);
 }
 
@@ -76,7 +79,16 @@ void UserClient::handleError(int hint)
 
 /*----------------------------------------------------------------------------*/
 
+const long Parser::FIRST_SEQNUM;
+const long Parser::INVALID_LONG;
 const char *Parser::CRLF = "\r\n";
+const char Parser::DELIMITER;
+const char Parser::TYPE_FOLLOW;
+const char Parser::TYPE_UNFOLLOW;
+const char Parser::TYPE_BROADCAST;
+const char Parser::TYPE_PRIVATE;
+const char Parser::TYPE_STATUSUPDATE;
+const char Parser::TYPE_INVALID;
 
 bool Parser::findMessage(const string &str, size_t &start, string &message)
 {
@@ -88,6 +100,11 @@ bool Parser::findMessage(const string &str, size_t &start, string &message)
 
         // Skip CRLF.
         start = pos + 2;
+        if (start >= str.length())
+        {
+            // Indicate that there is no next message.
+            start = string::npos;
+        }
 
         return true;
     }
@@ -110,7 +127,7 @@ void Parser::parseEvent(Event &event)
 {
     event.m_seqnum = INVALID_LONG;
     event.m_type = TYPE_INVALID;
-    event.m_toUserId = INVALID_LONG;
+    event.m_fromUserId = INVALID_LONG;
     event.m_toUserId = INVALID_LONG;
 
     stringstream ss(event.m_payload);
@@ -189,6 +206,12 @@ bool Parser::isValidEvent(const Event &event)
     }
 
     return true;
+}
+
+void Parser::encodeMessage(const string& payload, string &message)
+{
+    message = payload;
+    message += CRLF;
 }
 
 } // namespace Protocol

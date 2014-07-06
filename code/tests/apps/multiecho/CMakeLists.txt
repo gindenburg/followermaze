@@ -7,6 +7,8 @@ set(APP_NAME "multiecho")
 
 # List the source files
 set(SRC_LIST
+    ${FOLLOWERMAZE_SOURCE_PATH}/engine.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/protocol.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/client.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
     ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp

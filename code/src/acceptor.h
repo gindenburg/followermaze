@@ -8,6 +8,7 @@
 
 #include "eventhandler.h"
 #include "reactor.h"
+#include "engine.h"
 #include "logger.h"
 
 namespace followermaze
@@ -17,27 +18,26 @@ template < class ClientType >
 class Acceptor : public EventHandler
 {
 public:
-    Acceptor(int port, Reactor &reactor) :
-        m_conn(port),
-        m_reactor(reactor)
+    Acceptor(int port, Reactor &reactor, Engine &engine) :
+        m_connection(port),
+        m_reactor(reactor),
+        m_engine(engine)
     {
     }
 
     virtual Handle getHandle()
     {
-        return m_conn.getHandle();
+        return m_connection.getHandle();
     }
 
     // Accepts connection request, creates the client and registers it
     // with the reactor.
     virtual void handleInput(int /*hint*/)
     {
-        auto_ptr<Connection> clientConn(m_conn.accept(true));
-        auto_ptr<EventHandler> client(new ClientType(clientConn, m_reactor));
+        auto_ptr<Connection> clientConn(m_connection.accept(true));
+        auto_ptr<EventHandler> client(new ClientType(clientConn, m_reactor, m_engine));
 
         m_reactor.addHandler(client, Reactor::EvntRead);
-
-        client.release();
 
         Logger::getInstance().message("Client connected.");
     }
@@ -47,8 +47,9 @@ protected:
     virtual ~Acceptor() {}
 
 protected:
-    Connection m_conn;
+    Connection m_connection;
     Reactor &m_reactor;
+    Engine &m_engine;
 };
 
 } // namespace followermaze
