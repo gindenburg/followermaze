@@ -1,6 +1,8 @@
+#include <iostream>
 #include "server.h"
 #include "acceptor.h"
 #include "protocol.h"
+#include "engine.h"
 #include "logger.h"
 
 using namespace followermaze;
@@ -16,46 +18,45 @@ public:
         int m_adminPort;
     };
 
-    SimpleServer(const Config& config) : m_config(config)
+    SimpleServer(const Config& config) :
+        m_config(config),
+        m_eventSourceFactory(m_engine),
+        m_userClientFactory(m_engine)
     {
-    }
-
-    Protocol::UserClient *createClient(auto_ptr<Connection> conn, Reactor &reactor)
-    {
-        return new Protocol::UserClient(conn, reactor, m_engine);
     }
 
     virtual void initReactor()
     {
-        auto_ptr<EventHandler> adminAcceptor(new Acceptor<Admin>(m_config.m_adminPort, m_reactor, m_engine));
+        auto_ptr<EventHandler> adminAcceptor(new Acceptor(m_config.m_adminPort, m_reactor, m_adminFactory));
         m_reactor.addHandler(adminAcceptor, Reactor::EvntAccept);
         Logger::getInstance().info("Listening for admins on port ", m_config.m_adminPort);
 
-        auto_ptr<EventHandler> eventAcceptor(new Acceptor<Protocol::EventSource>(m_config.m_eventPort, m_reactor, m_engine));
+        auto_ptr<EventHandler> eventAcceptor(new Acceptor(m_config.m_eventPort, m_reactor, m_eventSourceFactory));
         m_reactor.addHandler(eventAcceptor, Reactor::EvntAccept);
         Logger::getInstance().info("Listening for events on port ", m_config.m_eventPort);
 
-        auto_ptr<EventHandler> userAcceptor(new Acceptor<Protocol::UserClient>(m_config.m_userPort, m_reactor, m_engine));
+        auto_ptr<EventHandler> userAcceptor(new Acceptor(m_config.m_userPort, m_reactor, m_userClientFactory));
         m_reactor.addHandler(userAcceptor, Reactor::EvntAccept);
         Logger::getInstance().info("Listening for users on port ", m_config.m_userPort);
     }
 
 protected:
     Config  m_config;
-    Engine m_engine;
+    ClientFactory<Admin> m_adminFactory;
+    protocol::Engine m_engine;
+    protocol::ClientFactory<protocol::EventSource> m_eventSourceFactory;
+    protocol::ClientFactory<protocol::UserClient> m_userClientFactory;
 };
 
 int main()
 {
+    SimpleServer::Config config;
+    config.m_eventPort = 9090;
+    config.m_userPort = 9099;
+    config.m_adminPort = 9999;
+
     try
     {
-        //Logger::getInstance().setLogLevel(Logger::LvlInfo);
-
-        SimpleServer::Config config;
-        config.m_eventPort = 9090;
-        config.m_userPort = 9099;
-        config.m_adminPort = 9999;
-
         SimpleServer server(config);
         server.serve();
 

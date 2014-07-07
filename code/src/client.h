@@ -19,12 +19,11 @@ namespace followermaze
 {
 
 class Reactor;
-class Engine;
 
 class Client : public EventHandler
 {
 public:
-    Client(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine);
+    Client(auto_ptr<Connection> conn, Reactor &reactor);
 
     // Implement EventHandler  interface.
     virtual Handle getHandle();
@@ -40,7 +39,7 @@ protected:
     virtual void doHandleInput(int hint);
     virtual void doHandleOutput(int hint);
 
-    // Unregister itself from the Reactor and dispose of itself.
+    // Unregister this from the Reactor and delete of this.
     void dispose(int hint);
 
 protected:
@@ -50,13 +49,12 @@ protected:
 protected:
     auto_ptr<Connection> m_connection;
     Reactor &m_reactor;
-    Engine &m_engine;
 };
 
 class Admin : public Client
 {
 public:
-    Admin(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine);
+    Admin(auto_ptr<Connection> conn, Reactor &reactor);
 
 protected:
     // Expect "stop". Stop Reactor if received.
@@ -65,6 +63,16 @@ protected:
 protected:
     // Ensure dynamic allocation.
     virtual ~Admin();
+};
+
+template < class ClientType >
+class ClientFactory : public EventHandlerFactory
+{
+public:
+    virtual EventHandler *createEventHandler(auto_ptr<Connection> connection, Reactor &reactor)
+    {
+        return new ClientType(connection, reactor);
+    }
 };
 
 } // namespace followermaze

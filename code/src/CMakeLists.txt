@@ -4,6 +4,7 @@
 # List the source files
 set(SRC_LIST
     acceptor.h
+    acceptor.cpp
     engine.h
     engine.cpp
     eventhandler.h

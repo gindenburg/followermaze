@@ -5,8 +5,9 @@
 
 using namespace std;
 using namespace followermaze;
+using namespace followermaze::protocol;
 
-class TestClient : public Protocol::UserClient
+class TestClient : public protocol::UserClient
 {
 public:
     vector< string > m_msg;
@@ -26,9 +27,9 @@ public:
 class TestEngine : public Engine
 {
 public:
-    Protocol::User *getUser(long id)
+    protocol::User *getUser(long id)
     {
-        Protocol::UserMap::iterator userIt = m_users.find(id);
+        protocol::UserMap::iterator userIt = m_users.find(id);
         if (userIt == m_users.end())
         {
             return NULL;
@@ -52,7 +53,7 @@ TEST(RegisterUser)
     long id = engine.registerUser(&client, "123456\n");
     CHECK_EQUAL(123456, id);
 
-    Protocol::User *user = engine.getUser(id);
+    protocol::User *user = engine.getUser(id);
     CHECK(user != NULL);
     CHECK_EQUAL(123456, user->m_id);
     CHECK_EQUAL(1, user->m_clients.size());
@@ -116,13 +117,13 @@ TEST(Follow)
     CHECK_EQUAL(1, client.m_msg.size());
     CHECK_EQUAL("2|F|1|2\n", client.m_msg[0]);
 
-    Protocol::User *user1 = engine.getUser(1l);
+    protocol::User *user1 = engine.getUser(1l);
     CHECK(user1 != NULL);
     CHECK_EQUAL(0, user1->m_clients.size());
     CHECK_EQUAL(0, user1->m_followers.size());
     CHECK_EQUAL(1, user1->m_followees.size());
 
-    Protocol::User *user2 = engine.getUser(2l);
+    protocol::User *user2 = engine.getUser(2l);
     CHECK(user2 != NULL);
     CHECK_EQUAL(1, user2->m_clients.size());
     CHECK_EQUAL(1, user2->m_followers.size());
@@ -147,7 +148,7 @@ TEST(Unfollow)
     events = "2|U|1|2\n";
     engine.handleEvents(events);
     CHECK(NULL == engine.getUser(1l));
-    Protocol::User *user2 = engine.getUser(2l);
+    protocol::User *user2 = engine.getUser(2l);
     CHECK(user2 != NULL);
     CHECK_EQUAL(0, user2->m_followers.size());
 
@@ -157,7 +158,7 @@ TEST(Unfollow)
     engine.registerUser(&client, "1\n");
     events = "4|U|1|2\n";
     engine.handleEvents(events);
-    Protocol::User *user1 = engine.getUser(1l);
+    protocol::User *user1 = engine.getUser(1l);
     CHECK(user1 != NULL);
     CHECK_EQUAL(0, user1->m_followees.size());
 }

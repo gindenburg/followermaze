@@ -10,7 +10,8 @@ using namespace std;
 namespace followermaze
 {
 
-using namespace Protocol;
+namespace protocol
+{
 
 Engine::Engine() :
     m_nextEventSeqnum(Parser::FIRST_SEQNUM)
@@ -324,5 +325,7 @@ bool Engine::isBlankUser(const User& user)
 {
     return (user.m_clients.empty() && user.m_followers.empty() && user.m_followees.empty());
 }
+
+} //  namespace protocol
 
 } //  namespace followermaze

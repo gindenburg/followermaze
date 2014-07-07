@@ -1,7 +1,6 @@
 #include <assert.h>
 #include "client.h"
 #include "reactor.h"
-#include "engine.h"
 #include "logger.h"
 
 namespace followermaze
@@ -11,10 +10,9 @@ Client::~Client()
 {
 }
 
-Client::Client(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
+Client::Client(auto_ptr<Connection> conn, Reactor &reactor) :
     m_connection(conn),
-    m_reactor(reactor),
-    m_engine(engine)
+    m_reactor(reactor)
 {
     assert(m_connection.get() != NULL);
 }
@@ -89,13 +87,15 @@ void Client::dispose(int hint)
     delete this;
 }
 
-Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor, engine)
+Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor) :
+    Client(conn, reactor)
 {
+    Logger::getInstance().info("Admin connected.");
 }
 
 Admin::~Admin()
 {
+    Logger::getInstance().info("Admin disconnected.");
 }
 
 void Admin::doHandleInput(int hint)

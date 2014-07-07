@@ -13,10 +13,11 @@ namespace followermaze
 {
 
 class Reactor;
-class Engine;
 
-namespace Protocol
+namespace protocol
 {
+
+class Engine;
 
 struct Event
 {
@@ -50,6 +51,7 @@ protected:
     virtual ~EventSource();
 
 protected:
+    Engine &m_engine;
     string m_buffer;
 };
 
@@ -87,6 +89,7 @@ protected:
     virtual ~UserClient();
 
 protected:
+    Engine &m_engine;
     string m_messageIn;
     string m_messageOut;
     long m_userId;
@@ -117,7 +120,25 @@ struct Parser
     static const char TYPE_INVALID = '.';
 };
 
-} // namespace Protocol
+template< class ClientType >
+class ClientFactory : public EventHandlerFactory
+{
+public:
+    ClientFactory(Engine &engine) :
+        m_engine(engine)
+    {
+    }
+
+    virtual EventHandler *createEventHandler(auto_ptr<Connection> connection, Reactor &reactor)
+    {
+        return new ClientType(connection, reactor, m_engine);
+    }
+
+private:
+    Engine &m_engine;
+};
+
+} // namespace protocol
 
 } // namespace followerspace
 

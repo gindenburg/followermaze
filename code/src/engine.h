@@ -17,7 +17,8 @@ using namespace std;
 namespace followermaze
 {
 
-using namespace Protocol;
+namespace protocol
+{
 
 class Engine
 {
@@ -45,6 +46,8 @@ protected:
     EventQueue m_events;
     long m_nextEventSeqnum;
 };
+
+} // namespace protocol
 
 } // namespace followermaze
 

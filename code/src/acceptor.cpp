@@ -1,32 +1,31 @@
-template < class ClientType >
-class Acceptor : public EventHandler
+#include "acceptor.h"
+#include "eventhandler.h"
+#include "reactor.h"
+
+namespace followermaze
 {
-public:
-    Acceptor(int port, Reactor &reactor) : m_conn(port), m_reactor(reactor)
-    {
-    }
 
-    virtual Handle getHandle()
-    {
-        return m_conn.getHandle();
-    }
+Acceptor::Acceptor(int port, Reactor &reactor, EventHandlerFactory &factory) :
+    m_connection(port),
+    m_reactor(reactor),
+    m_factory(factory)
+{
+}
 
-    virtual void handleInput(int /*hint*/)
-    {
-        auto_ptr<Connection> clientConn(m_conn.accept(true));
-        auto_ptr<EventHandler> client(new ClientType(clientConn, m_reactor));
+Handle Acceptor::getHandle()
+{
+    return m_connection.getHandle();
+}
 
-        m_reactor.addHandler(client, Reactor::EvntRead);
+void Acceptor::handleInput(int hint)
+{
+    auto_ptr<Connection> clientConn(m_connection.accept(true));
+    auto_ptr<EventHandler> client(m_factory.createEventHandler(clientConn, m_reactor));
+    m_reactor.addHandler(client, Reactor::EvntRead);
+}
 
-        client.release();
+Acceptor::~Acceptor()
+{
+}
 
-        Logger::getInstance().message("Client connected.");
-    }
-
-protected:
-    virtual ~Acceptor() {}
-
-protected:
-    Connection m_conn;
-    Reactor &m_reactor;
-};
+} // namespace followermaze

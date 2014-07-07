@@ -11,9 +11,19 @@ followermaze concerns/TODOs
     Is it legit to connect both event source and clients on the same port?
     Technically you could parse the message and figure out if this is a user 
     client or the event source, but this is not cool. Assuming it's a typo :-)
+  - CRLF is NOT implemented as '\r\n' by the test suite despite what the spec
+    says. Oh well. Not too bad.
 
 followermaze log
 ===============================================================================
+
+07.07.2014
+- back again.
+- implemented Engine to ecapsulate the business logic.
+- implemeted Protocol to encapsulate the problem domain and protocol syntax.
+- refactored the code.
+- added unit tests for all the significant units.
+- tested with the test suite. fixed a few bugs.
 
 25.06.2014
 - back on the project. was busy for a few days.

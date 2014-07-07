@@ -1,4 +1,3 @@
-#include "engine.h"
 #include "client.h"
 #include "server.h"
 #include "acceptor.h"
@@ -10,8 +9,8 @@ using namespace followermaze;
 class EchoClient : public Client
 {
 public:
-    EchoClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-        Client(conn, reactor, engine)
+    EchoClient(auto_ptr<Connection> conn, Reactor &reactor) :
+        Client(conn, reactor)
     {
     }
 
@@ -54,18 +53,19 @@ public:
 
     virtual void initReactor()
     {
-        auto_ptr<EventHandler> adminAcceptor(new Acceptor<Admin>(m_config.m_adminPort, m_reactor, m_engine));
+        auto_ptr<EventHandler> adminAcceptor(new Acceptor(m_config.m_adminPort, m_reactor, m_adminFactory));
         m_reactor.addHandler(adminAcceptor, Reactor::EvntAccept);
         Logger::getInstance().info("Listening for admins on port ", m_config.m_adminPort);
 
-        auto_ptr<EventHandler> userAcceptor(new Acceptor<EchoClient>(m_config.m_userPort, m_reactor, m_engine));
+        auto_ptr<EventHandler> userAcceptor(new Acceptor(m_config.m_userPort, m_reactor, m_clientFactory));
         m_reactor.addHandler(userAcceptor, Reactor::EvntAccept);
         Logger::getInstance().info("Listening for users on port ", m_config.m_userPort);
     }
 
 protected:
     Config  m_config;
-    Engine m_engine;
+    ClientFactory<Admin> m_adminFactory;
+    ClientFactory<EchoClient> m_clientFactory;
 };
 
 int main()

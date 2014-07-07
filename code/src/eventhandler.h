@@ -4,6 +4,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
+#include <memory>
 #include "connection.h"
 
 namespace followermaze
@@ -35,6 +36,16 @@ public:
     virtual void handleError(int hint)
     {
     }
+};
+
+class Reactor;
+
+class EventHandlerFactory
+{
+public:
+    virtual ~EventHandlerFactory() {}
+
+    virtual EventHandler *createEventHandler(auto_ptr<Connection> connection, Reactor &reactor) = 0;
 };
 
 } // namespace followermaze

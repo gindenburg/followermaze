@@ -9,13 +9,14 @@
 namespace followermaze
 {
 
-namespace Protocol
+namespace protocol
 {
 
 /*----------------------------------------------------------------------------*/
 
 EventSource::EventSource(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor, engine)
+    Client(conn, reactor),
+    m_engine(engine)
 {
     Logger::getInstance().info("EventSource connected.");
 }
@@ -48,7 +49,8 @@ void EventSource::doHandleInput(int hint)
 /*----------------------------------------------------------------------------*/
 
 UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor, engine),
+    Client(conn, reactor),
+    m_engine(engine),
     m_userId(Parser::INVALID_LONG),
     m_hint(-1)
 {
@@ -71,7 +73,7 @@ void UserClient::doHandleInput(int hint)
     m_hint = hint;
     m_messageIn += m_connection->receive();
     m_userId = m_engine.registerUser(this, m_messageIn);
-    if (m_userId != Protocol::Parser::INVALID_LONG)
+    if (m_userId != protocol::Parser::INVALID_LONG)
     {
         Logger::getInstance().info("User authenticated: ", m_userId);
         m_messageIn.clear();
@@ -247,6 +249,6 @@ void Parser::encodeMessage(const string& payload, string &message)
     message.push_back(LF);
 }
 
-} // namespace Protocol
+} // namespace protocol
 
 } // namespace followerspace
