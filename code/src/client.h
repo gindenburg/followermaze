@@ -1,10 +1,5 @@
 /* This file defines the Client interface and it's specialisation Admin.
- * Client is a base class for all clients. Client implements EventHandler
- * interface to introduce basic functionality and error handling.
- * Client encapsulates a Connection and uses Reactor to handle events.
- * Client instances are created by Acceptor, owned by Reactor and disposed
- * of in call back functions while hadling client disconnect or error.
- * Admin is a special type of client used to interrupt Reactor's event loop.
+ * It also contains declaration of EventHandlerFactory.
  */
 
 #ifndef CLIENT_H
@@ -20,6 +15,13 @@ namespace followermaze
 
 class Reactor;
 
+/*
+ * Client is a base class for all clients. Client implements EventHandler
+ * interface to introduce basic functionality and error handling.
+ * Client encapsulates a Connection and uses Reactor to handle events.
+ * Client instances normally are created by Acceptor, owned by Reactor and
+ * disposed of in call back functions while hadling client disconnect or error.
+ */
 class Client : public EventHandler
 {
 public:
@@ -39,7 +41,7 @@ protected:
     virtual void doHandleInput(int hint);
     virtual void doHandleOutput(int hint);
 
-    // Unregister this from the Reactor and delete of this.
+    // Unregister this from the Reactor and delete this.
     void dispose(int hint);
 
 protected:
@@ -51,13 +53,16 @@ protected:
     Reactor &m_reactor;
 };
 
+/*
+ * Admin is a client which can be used to interrupt Reactor's event loop.
+ */
 class Admin : public Client
 {
 public:
     Admin(auto_ptr<Connection> conn, Reactor &reactor);
 
 protected:
-    // Expect "stop". Stop Reactor if received.
+    // Stop Reactor if received "stop".
     virtual void doHandleInput(int hint);
 
 protected:
@@ -65,6 +70,13 @@ protected:
     virtual ~Admin();
 };
 
+/*
+ * ClientFactory is a template interface which declares a factory method
+ * to create EventHandler. ClientType is expected to have a constructor
+ * which accepts auto_ptr<Connection> and reference to Reactor.
+ * This class (or subclasses) must be instantiated to initialize Acceptor.
+ * Acceptor will use the instances of this class to create Clients.
+ */
 template < class ClientType >
 class ClientFactory : public EventHandlerFactory
 {

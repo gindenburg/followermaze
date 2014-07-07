@@ -1,6 +1,4 @@
 /* This file describes Acceptor class template (extension of the Reactor pattern).
- * Acceptor is a special event handler which accepts connection requests
- * and creates clients (defined as template parameter) to handle the connection.
  */
 
 #ifndef ACCEPTOR_H
@@ -15,15 +13,18 @@ namespace followermaze
 class Connection;
 class Reactor;
 
+/*
+ * Acceptor is an event handler which accepts connection requests, creates
+ * clients (using an EventHandlerFactory), and registers them to the Reactor.
+ */
 class Acceptor : public EventHandler
 {
 public:
+    // Create server connection and listen for clients.
     Acceptor(int port, Reactor &reactor, EventHandlerFactory &factory);
 
+    // Implementation of EventHandler interface.
     virtual Handle getHandle();
-
-    // Accepts connection request, creates the client and registers it
-    // with the reactor.
     virtual void handleInput(int hint);
 
 protected:

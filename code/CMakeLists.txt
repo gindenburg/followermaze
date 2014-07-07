@@ -2,7 +2,9 @@ project(followermaze)
 cmake_minimum_required(VERSION 2.8)
 
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
+set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 set(FOLLOWERMAZE_SOURCE_PATH "${PROJECT_SOURCE_DIR}/src")
+set(FOLLOWERMAZE_LIBRARY_NAME ${PROJECT_NAME}lib)
 
 # Configure build for the main app
 add_subdirectory(./src)

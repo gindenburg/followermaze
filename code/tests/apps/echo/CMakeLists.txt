@@ -5,14 +5,8 @@
 # Choose app's name
 set(ECHO_APP "echo")
 
-# List the source files
-set(SRC_LIST
-    ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp
-    main.cpp
-)
-
 # Set the main app source location to includes
 include_directories(${FOLLOWERMAZE_SOURCE_PATH})
 
-add_executable(${ECHO_APP} ${SRC_LIST})
+add_executable(${ECHO_APP} main.cpp)
+target_link_libraries(${ECHO_APP} ${FOLLOWERMAZE_LIBRARY_NAME})

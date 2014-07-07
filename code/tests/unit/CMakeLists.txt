@@ -5,12 +5,6 @@ set(UNIT_TESTS_RUNNER ${PROJECT_NAME}_run_unit_tests)
 
 set(SRC_LIST
     test.h
-    ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/client.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/reactor.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/engine.cpp
-    ${FOLLOWERMAZE_SOURCE_PATH}/protocol.cpp
     connection.cpp
     protocol.cpp
     engine.cpp
@@ -20,7 +14,7 @@ set(SRC_LIST
 
 include_directories(${FOLLOWERMAZE_SOURCE_PATH})
 add_executable(${UNIT_TESTS_RUNNER} ${SRC_LIST})
-target_link_libraries(${UNIT_TESTS_RUNNER} libunittest++.a)
+target_link_libraries(${UNIT_TESTS_RUNNER} libunittest++.a ${FOLLOWERMAZE_LIBRARY_NAME})
 
 add_custom_target(check ALL "${EXECUTABLE_OUTPUT_PATH}/${UNIT_TESTS_RUNNER}" DEPENDS ${UNIT_TESTS_RUNNER} COMMENT "Running unit tests..." VERBATIM)
 add_custom_target(test "${EXECUTABLE_OUTPUT_PATH}/${UNIT_TESTS_RUNNER}" DEPENDS ${UNIT_TESTS_RUNNER} COMMENT "Running unit tests..." VERBATIM)

@@ -1,8 +1,5 @@
 /*
  * This file describes Connection interface.
- * Connection wraps an OS specific TCP/IP network I/O resource represented
- * by a Handle. It provides a way to exchange information through this
- * resource synchronously or asynchronously (defined at construction time).
  */
 
 #ifndef CONNECTION_H
@@ -19,6 +16,13 @@ namespace followermaze
 typedef int Handle;
 static const int INVALID_HANDLE = -1;
 
+/*
+ * Connection wraps an OS specific TCP/IP network I/O resource represented
+ * by a Handle. It provides a way to exchange information through this
+ * resource synchronously or asynchronously (defined at construction time).
+ * Connection can be created as a valid server (listening) connection or an
+ * invalid one.
+ */
 class Connection
 {
 public:
@@ -73,7 +77,7 @@ public:
 
 private:
     Handle m_handle;  // I/O handle.
-    char m_buffer[1024];
+    char m_buffer[1024]; // Internal buffer for incoming data.
 };
 
 } // namespace followermaze

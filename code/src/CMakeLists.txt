@@ -21,7 +21,9 @@ set(SRC_LIST
     reactor.cpp
     server.h
     server.cpp
-    main.cpp
 )
 
-add_executable(${PROJECT_NAME} ${SRC_LIST})
+add_library(${FOLLOWERMAZE_LIBRARY_NAME} ${SRC_LIST})
+
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} ${FOLLOWERMAZE_LIBRARY_NAME})
