@@ -26,7 +26,7 @@ void Server::serve()
     {
         if (e.getErr() == Reactor::Exception::ErrStop)
         {
-            Logger::getInstance().message("Reactor stopped.");
+            Logger::getInstance().info("Reactor stopped.");
         }
     }
 }

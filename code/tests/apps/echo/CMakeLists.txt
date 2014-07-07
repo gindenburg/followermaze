@@ -8,6 +8,7 @@ set(ECHO_APP "echo")
 # List the source files
 set(SRC_LIST
     ${FOLLOWERMAZE_SOURCE_PATH}/connection.cpp
+    ${FOLLOWERMAZE_SOURCE_PATH}/logger.cpp
     main.cpp
 )
 

@@ -6,19 +6,101 @@ namespace followermaze
 
 Logger Logger::m_logger;
 
-void Logger::message(const string &msg)
+void Logger::setLogLevel(LogLevel level)
 {
-    cout << "MSG: " << msg.c_str() << endl << flush;
+    m_level = level;
 }
 
-void Logger::message(const string &msg, int number)
+void Logger::debug(const string &msg)
 {
-    cout << "MSG: " << msg.c_str() << number << "." << endl << flush;
+    if (m_level == LvlDebug)
+    {
+        message("[DEBUG] ", msg, "");
+    }
+}
+
+void Logger::debug(const string &msg, const string &msg1)
+{
+    if (m_level == LvlDebug)
+    {
+        message("[DEBUG] ", msg, msg1);
+    }
+}
+
+void Logger::debug(const string &msg, int err)
+{
+    if (m_level == LvlDebug)
+    {
+        message("[DEBUG] ", msg, "", err);
+    }
+}
+
+void Logger::debug(const string &msg, const string &msg1, int err)
+{
+    if (m_level == LvlDebug)
+    {
+        message("[DEBUG] ", msg, msg1, err);
+    }
+}
+
+void Logger::info(const string &msg)
+{
+    if (m_level >= LvlInfo)
+    {
+        message("[INFO] ", msg, "");
+    }
+}
+
+void Logger::info(const string &msg, const string &msg1)
+{
+    if (m_level >= LvlInfo)
+    {
+        message("[INFO] ", msg, msg1);
+    }
+}
+
+void Logger::info(const string &msg, int err)
+{
+    if (m_level >= LvlInfo)
+    {
+        message("[INFO] ", msg, "", err);
+    }
+}
+
+void Logger::info(const string &msg, const string &msg1, int err)
+{
+    if (m_level >= LvlInfo)
+    {
+        message("[INFO] ", msg, msg1, err);
+    }
+}
+
+void Logger::error(const string &msg)
+{
+    message("[ERROR] ", msg, "");
+}
+
+void Logger::error(const string &msg, const string &msg1)
+{
+    message("[ERROR] ", msg, msg1);
 }
 
 void Logger::error(const string &msg, int err)
 {
-    cout << "ERR: " << msg.c_str() << "(" << err << ")." << endl << flush;
+    message("[ERROR] ", msg, "", err);
+}
+
+void Logger::error(const string &msg, const string &msg1, int err)
+{
+    message("[ERROR] ", msg, msg1, err);
+}
+
+void Logger::message(const char *prefix, const string &msg, const string &msg1, int err)
+{
+    cout << prefix << msg.c_str() << msg1.c_str();
+    if (err != INT_MAX)
+        cout << err;
+    cout << endl << flush;
 }
 
 Logger& Logger::getInstance()

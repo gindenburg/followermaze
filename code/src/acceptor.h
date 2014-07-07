@@ -38,8 +38,6 @@ public:
         auto_ptr<EventHandler> client(new ClientType(clientConn, m_reactor, m_engine));
 
         m_reactor.addHandler(client, Reactor::EvntRead);
-
-        Logger::getInstance().message("Client connected.");
     }
 
 protected:

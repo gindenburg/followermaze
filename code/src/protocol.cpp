@@ -17,13 +17,29 @@ namespace Protocol
 EventSource::EventSource(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
     Client(conn, reactor, engine)
 {
+    Logger::getInstance().info("EventSource connected.");
 }
 
 EventSource::~EventSource()
 {
+    Logger::getInstance().info("EventSource disconnected.");
 }
 
-void EventSource::doHandleInput(int /*hint*/)
+void EventSource::handleClose(int hint)
+{
+    Logger::getInstance().info("EventSource closed.");
+    m_engine.resetEventQueue();
+    Client::handleClose(hint);
+}
+
+void EventSource::handleError(int hint)
+{
+    Logger::getInstance().error("EventSource error.");
+    m_engine.resetEventQueue();
+    Client::handleError(hint);
+}
+
+void EventSource::doHandleInput(int hint)
 {
     m_buffer += m_connection->receive();
     m_engine.handleEvents(m_buffer);
@@ -36,6 +52,7 @@ UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engi
     m_userId(Parser::INVALID_LONG),
     m_hint(-1)
 {
+    Logger::getInstance().info("UserClient connected.");
 }
 
 void UserClient::send(const string& message)
@@ -46,15 +63,18 @@ void UserClient::send(const string& message)
 
 UserClient::~UserClient()
 {
+    Logger::getInstance().info("UserClient disconnected.");
 }
 
 void UserClient::doHandleInput(int hint)
 {
-    if (m_userId == Parser::INVALID_LONG)
+    m_hint = hint;
+    m_messageIn += m_connection->receive();
+    m_userId = m_engine.registerUser(this, m_messageIn);
+    if (m_userId != Protocol::Parser::INVALID_LONG)
     {
-        m_messageIn += m_connection->receive();
-        m_userId = m_engine.registerUser(this, m_messageIn);
-        m_hint = hint;
+        Logger::getInstance().info("User authenticated: ", m_userId);
+        m_messageIn.clear();
     }
 }
 
@@ -67,14 +87,22 @@ void UserClient::doHandleOutput(int hint)
 
 void UserClient::handleClose(int hint)
 {
-    m_engine.unregisterUser(m_userId, this);
+    reset(hint);
     Client::handleClose(hint);
 }
 
 void UserClient::handleError(int hint)
 {
-    m_engine.unregisterUser(m_userId, this);
+    reset(hint);
     Client::handleError(hint);
+}
+
+void UserClient::reset(int hint)
+{
+    m_engine.unregisterUser(m_userId, this);
+    m_userId = Parser::INVALID_LONG;
+    m_messageOut.clear();
+    m_messageIn.clear();
 }
 
 /*----------------------------------------------------------------------------*/
@@ -92,14 +120,19 @@ const char Parser::TYPE_INVALID;
 
 bool Parser::findMessage(const string &str, size_t &start, string &message)
 {
-    size_t pos = str.find(CRLF, start);
+    size_t pos = str.find_first_of(CRLF, start);
 
     if (pos != string::npos)
     {
         message = str.substr(start, pos - start);
+        start = pos;
 
         // Skip CRLF.
-        start = pos + 2;
+        while (start < str.length() && (str[start] == CR || str[start] == LF))
+        {
+            start++;
+        }
+
         if (start >= str.length())
         {
             // Indicate that there is no next message.
@@ -211,7 +244,7 @@ bool Parser::isValidEvent(const Event &event)
 void Parser::encodeMessage(const string& payload, string &message)
 {
     message = payload;
-    message += CRLF;
+    message.push_back(LF);
 }
 
 } // namespace Protocol

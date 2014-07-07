@@ -26,7 +26,6 @@ Engine::~Engine()
         delete event;
     }
 
-    UserMap::iterator userIt = m_users.begin();
     for (UserMap::iterator userIt = m_users.begin();
                            userIt != m_users.end();
                            ++userIt)
@@ -156,6 +155,41 @@ void Engine::unregisterUser(long id, UserClient *userClient)
             m_users.erase(userIt);
             delete user;
         }
+    }
+}
+
+void Engine::resetEventQueue()
+{
+    while (!m_events.empty())
+    {
+        Event *event = m_events.top();
+        m_events.pop();
+        delete event;
+    }
+
+    m_nextEventSeqnum = Parser::FIRST_SEQNUM;
+
+    UserMap::iterator userIt = m_users.begin();
+    while (userIt != m_users.end())
+    {
+        User *user = userIt->second;
+
+        if (user != NULL)
+        {
+            user->m_followees.clear();
+            user->m_followers.clear();
+
+            if (user->m_clients.empty())
+            {
+                UserMap::iterator userToEraseIt = userIt;
+                userIt++;
+                m_users.erase(userToEraseIt);
+                delete user;
+                continue;
+            }
+        }
+
+        userIt++;
     }
 }
 

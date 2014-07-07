@@ -60,7 +60,7 @@ public:
     // If connected returns received message.
     // If blocking will block until there is data.
     // If non-blocking will throw if attempt to receive is made with no data waiting.
-    virtual string receive();
+    virtual const char* receive();
 
     // Sends the message.
     // If blocking will block until data has been transferred to the transport layer.
@@ -73,6 +73,7 @@ public:
 
 private:
     Handle m_handle;  // I/O handle.
+    char m_buffer[1024];
 };
 
 } // namespace followermaze

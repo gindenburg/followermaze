@@ -56,11 +56,11 @@ public:
     {
         auto_ptr<EventHandler> adminAcceptor(new Acceptor<Admin>(m_config.m_adminPort, m_reactor, m_engine));
         m_reactor.addHandler(adminAcceptor, Reactor::EvntAccept);
-        Logger::getInstance().message("Listening for admins on port ", m_config.m_adminPort);
+        Logger::getInstance().info("Listening for admins on port ", m_config.m_adminPort);
 
         auto_ptr<EventHandler> userAcceptor(new Acceptor<EchoClient>(m_config.m_userPort, m_reactor, m_engine));
         m_reactor.addHandler(userAcceptor, Reactor::EvntAccept);
-        Logger::getInstance().message("Listening for users on port ", m_config.m_userPort);
+        Logger::getInstance().info("Listening for users on port ", m_config.m_userPort);
     }
 
 protected:
@@ -79,14 +79,11 @@ int main()
         EchoServer server(config);
         server.serve();
 
-        Logger::getInstance().message("Server shutting down.");
+        Logger::getInstance().info("Server shutting down.");
     }
     catch (BaseException e)
     {
-        string message(e.what());
-        message += ": ";
-        Logger::getInstance().error(message, e.getErr());
-        Logger::getInstance().message("Server failed. Shutting down.");
+        Logger::getInstance().error("Server failed. Error: ", e.what(), e.getErr());
     }
 
     return 0;

@@ -31,7 +31,7 @@ TEST(ParseInvalidMessage)
     string message;
     size_t start = 0;
 
-    CHECK(!Protocol::Parser::findMessage("message\r", start, message));
+    CHECK(!Protocol::Parser::findMessage("message", start, message));
     CHECK_EQUAL(message, "");
     CHECK_EQUAL(start, 0);
 }
@@ -191,7 +191,7 @@ TEST(EncodeMessage)
 {
     string message;
     Protocol::Parser::encodeMessage("message", message);
-    CHECK_EQUAL("message\r\n", message);
+    CHECK_EQUAL("message\n", message);
 }
 
 TEST(EventQueue)

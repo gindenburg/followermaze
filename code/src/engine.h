@@ -28,6 +28,7 @@ public:
     void handleEvents(string& events);
     long registerUser(UserClient *userClient, const string& in);
     void unregisterUser(long id, UserClient *userClient);
+    void resetEventQueue();
 
 protected:
     void handleFollow(const Event& event);

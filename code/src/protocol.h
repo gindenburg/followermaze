@@ -40,6 +40,10 @@ class EventSource : public Client
 public:
     EventSource(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine);
 
+    virtual void handleClose(int hint);
+    virtual void handleError(int hint);
+
+protected:
     virtual void doHandleInput(int hint);
 
 protected:
@@ -77,6 +81,8 @@ protected:
     virtual void doHandleInput(int hint);
     virtual void doHandleOutput(int hint);
 
+    void reset(int hint);
+
 protected:
     virtual ~UserClient();
 
@@ -99,6 +105,8 @@ struct Parser
 
     static const long FIRST_SEQNUM = 1l;
     static const long INVALID_LONG = -1l;
+    static const char CR = '\r';
+    static const char LF = '\n';
     static const char *CRLF;
     static const char DELIMITER = '|';
     static const char TYPE_FOLLOW = 'F';

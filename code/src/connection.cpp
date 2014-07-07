@@ -9,7 +9,6 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <errno.h>
-//#include <fcntl.h>
 
 namespace followermaze
 {
@@ -79,33 +78,26 @@ Connection* Connection::accept(bool async)
     return clientConnection;
 }
 
-string Connection::receive()
+const char *Connection::receive()
 {
-    // Naive implementation: read until there is something to read.
-    // TODO: can this be a performance bottleneck?
     ssize_t bytesRecieved = 0;
-    string message;
-    char incomingDataBuffer[128];
 
-    while ((bytesRecieved = recv(m_handle, incomingDataBuffer, 128, 0)) > 0)
-    {
-        incomingDataBuffer[bytesRecieved] = 0; // zterminate
-        message += incomingDataBuffer;
-    }
+    bytesRecieved = recv(m_handle, m_buffer, 1023, 0);
 
     if (bytesRecieved == 0)
     {
         // Client closed the connection.
         throw Exception(Exception::ErrClientDisconnect);
     }
-
-    if (!(errno == EAGAIN || errno == EWOULDBLOCK))
+    else if (bytesRecieved < 0 && !(errno == EAGAIN || errno == EWOULDBLOCK))
     {
         // Error.
         throw Exception(errno);
     }
 
-    return message;
+    m_buffer[bytesRecieved] = 0; // zterminate
+
+    return m_buffer;
 }
 
 void Connection::send(const string &message)

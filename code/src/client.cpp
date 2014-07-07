@@ -34,10 +34,11 @@ void Client::handleInput(int hint)
     {
         if (e.getErr() == Connection::Exception::ErrClientDisconnect)
         {
-            dispose(hint);
+            handleClose(hint);
         }
         else
         {
+            handleError(hint);
             throw e;
         }
     }
@@ -53,10 +54,11 @@ void Client::handleOutput(int hint)
     {
         if (e.getErr() == Connection::Exception::ErrClientDisconnect)
         {
-            dispose(hint);
+            handleClose(hint);
         }
         else
         {
+            handleError(hint);
             throw e;
         }
     }
@@ -69,7 +71,6 @@ void Client::handleClose(int hint)
 
 void Client::handleError(int hint)
 {
-    Logger::getInstance().message("Client error.");
     dispose(hint);
 }
 
@@ -86,7 +87,6 @@ void Client::dispose(int hint)
     EventHandler* self = m_reactor.detouchHandler(hint);
     assert(self == (EventHandler*)this);
     delete this;
-    Logger::getInstance().message("Client disconnected.");
 }
 
 Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
@@ -100,11 +100,11 @@ Admin::~Admin()
 
 void Admin::doHandleInput(int hint)
 {
-    string command = m_connection->receive();
+    string command(m_connection->receive());
 
     if (command.compare(0, 4, "stop") == 0)
     {
-        Logger::getInstance().message("Got stop command.");
+        Logger::getInstance().info("Got stop command.");
         throw Reactor::Exception(Reactor::Exception::ErrStop);
     }
 }
