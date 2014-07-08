@@ -56,10 +56,13 @@ int parseArguments(int argc, char *argv[], SimpleServer::Config &config)
     static const int DEFAULT_EVENT_PORT = 9090;
     static const int DEFAULT_USER_PORT = 9099;
 
-    static const char *usage = "followermaze is a server which expects event source and user clients on given ports. Port 9999 is reserved.\n" \
-                               "Usage(1): followermaze [event_source_port user_client_port]\n" \
-                               "Usage(2): followermaze stop\n" \
+    static const char *usage = "followermaze is a server which expects event source and user clients on given ports.\n" \
+                               "Port 9999 is reserved.\n" \
+                               "Usage(1): followermaze -h|--help\n" \
+                               "Usage(2): followermaze [event_source_port user_client_port]\n" \
+                               "Usage(3): followermaze stop\n" \
                                "Options:\n" \
+                               "  -h, --help - print usage\n" \
                                "  event_source_port - port to expect the event source on. Default 9090.\n" \
                                "  user_client_port - port to expect the user clients on. Default 9099.\n" \
                                "Commands:\n"
@@ -79,6 +82,13 @@ int parseArguments(int argc, char *argv[], SimpleServer::Config &config)
     }
     else if (argc == 2)
     {
+        if (string("-h").compare(argv[1]) == 0 ||
+            string("--help").compare(argv[1]) == 0)
+        {
+            cout << usage;
+            return 0;
+        }
+
         if (string("stop").compare(argv[1]) == 0)
         {
             system(STOP_COMMAND);
