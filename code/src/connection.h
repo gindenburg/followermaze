@@ -36,7 +36,7 @@ public:
 
     public:
         Exception(int err = BaseException::ErrGeneric) : BaseException(err) {}
-        virtual const char* what() const throw() { return "Connection::Exception"; }
+        virtual const char* what() const throw() { return "Connection::Exception#"; }
     };
 
 public:

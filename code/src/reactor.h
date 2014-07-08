@@ -22,8 +22,8 @@ public:
             ErrStop
         };
 
-        Exception(int err = BaseException::ErrGeneric);
-        virtual const char* what() const throw();
+        Exception(int err = BaseException::ErrGeneric) : BaseException(err) {}
+        virtual const char* what() const throw() { return "Reactor::Exception#"; }
     };
 
     typedef unsigned int EventType;
@@ -44,7 +44,7 @@ public:
     void handleEvents();
 
 protected:
-    static const unsigned int MAX_FDS = 128;
+    static const unsigned int MAX_FDS = 1024;
     struct pollfd m_pollfds[MAX_FDS];
     EventHandler *m_handlers[MAX_FDS];
 };

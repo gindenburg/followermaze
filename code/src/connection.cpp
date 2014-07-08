@@ -23,7 +23,15 @@ Connection::Connection(int portno, bool async)
         throw Exception(errno);
     }
 
-    // Initialize socket structure
+    // Make socket reuse the address to enable server restart without waiting.
+    int so_reuseaddr = 1;
+    if (setsockopt(m_handle, SOL_SOCKET, SO_REUSEADDR, &so_reuseaddr, sizeof(so_reuseaddr)) < 0)
+    {
+        close(m_handle);
+        throw Exception(errno);
+    }
+
+    // Initialize socket address structure
     struct sockaddr_in serverAddr;
     memset(&serverAddr, 0, sizeof(serverAddr));
 

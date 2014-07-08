@@ -5,16 +5,6 @@
 namespace followermaze
 {
 
-Reactor::Exception::Exception(int err /*= BaseException::ErrGeneric*/) :
-    BaseException(err)
-{
-}
-
-const char* Reactor::Exception::what() const throw()
-{
-    return "Reactor::Exception";
-}
-
 Reactor::Reactor()
 {
     for (unsigned int i = 0; i < MAX_FDS; ++i)
