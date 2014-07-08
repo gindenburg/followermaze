@@ -17,7 +17,7 @@ Handle Acceptor::getHandle()
     return m_connection.getHandle();
 }
 
-void Acceptor::handleInput(int hint)
+void Acceptor::handleInput(int /*hint*/)
 {
     auto_ptr<Connection> clientConn(m_connection.accept(true));
     auto_ptr<EventHandler> client(m_factory.createEventHandler(clientConn, m_reactor));

@@ -25,31 +25,31 @@ public:
 
     // Called if input is available on the Handle.
     // hint should be passed to methods of Reactor.
-    virtual void handleInput(int hint)
+    virtual void handleInput(int /*hint*/)
     {
     }
 
     // Called if Handle is ready to accept output.
     // hint should be passed to methods of Reactor.
-    virtual void handleOutput(int hint)
+    virtual void handleOutput(int /*hint*/)
     {
     }
 
     // Called if Handle has been closed.
     // hint should be passed to methods of Reactor.
-    virtual void handleClose(int hint)
+    virtual void handleClose(int /*hint*/)
     {
     }
 
     // Called if timed out while waiting for an event on the Handle.
     // hint should be passed to methods of Reactor.
-    virtual void handleTimeout(int hint)
+    virtual void handleTimeout(int /*hint*/)
     {
     }
 
     // Called if an error occured while waiting for an event on Handle.
     // hint should be passed to methods of Reactor.
-    virtual void handleError(int hint)
+    virtual void handleError(int /*hint*/)
     {
     }
 };

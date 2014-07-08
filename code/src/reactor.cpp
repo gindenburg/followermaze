@@ -108,8 +108,8 @@ void Reactor::handleEvents()
         throw Exception(errno);
     }
 
-    unsigned int handledEvents = 0;
-    for (unsigned int i = 0; i < MAX_FDS && handledEvents < res; ++i)
+    int handledEvents = 0;
+    for (int i = 0; i < MAX_FDS && handledEvents < res; ++i)
     {
         if (m_pollfds[i].revents != 0)
         {

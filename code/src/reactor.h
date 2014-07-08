@@ -73,7 +73,7 @@ public:
     void handleEvents();
 
 protected:
-    static const unsigned int MAX_FDS = 1024;
+    static const int MAX_FDS = 1024;
     struct pollfd m_pollfds[MAX_FDS];
     EventHandler *m_handlers[MAX_FDS];
 };

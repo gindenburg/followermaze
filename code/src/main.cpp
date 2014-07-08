@@ -23,9 +23,9 @@ public:
 
     public:
         Config(int argc, char *argv[]) :
-            m_valid(false),
             m_stop(false),
             m_help(false),
+            m_valid(false),
             m_adminPort(ADMIN_PORT),
             m_eventPort(DEFAULT_EVENT_PORT),
             m_userPort(DEFAULT_USER_PORT)
@@ -81,9 +81,9 @@ public:
         bool m_valid;
 
     protected:
+        int m_adminPort;
         int m_eventPort;
         int m_userPort;
-        int m_adminPort;
     };
 
     SimpleServer(const Config& config) :

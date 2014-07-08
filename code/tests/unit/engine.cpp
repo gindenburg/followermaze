@@ -174,7 +174,7 @@ TEST(Private)
     engine.handleEvents(events);
     CHECK_EQUAL(0, engine.eventsQueueing());
 
-    long id = engine.registerUser(&client, "2\n");
+    engine.registerUser(&client, "2\n");
 
     events = "2|P|1|2\n";
     engine.handleEvents(events);

@@ -40,7 +40,7 @@ void EventSource::handleError(int hint)
     Client::handleError(hint);
 }
 
-void EventSource::doHandleInput(int hint)
+void EventSource::doHandleInput(int /*hint*/)
 {
     m_buffer += m_connection->receive();
     m_engine.handleEvents(m_buffer);
@@ -99,7 +99,7 @@ void UserClient::handleError(int hint)
     Client::handleError(hint);
 }
 
-void UserClient::reset(int hint)
+void UserClient::reset(int /*hint*/)
 {
     m_engine.unregisterUser(m_userId, this);
     m_userId = Parser::INVALID_LONG;

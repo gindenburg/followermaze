@@ -6,6 +6,10 @@ set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
 set(FOLLOWERMAZE_SOURCE_PATH "${PROJECT_SOURCE_DIR}/src")
 set(FOLLOWERMAZE_LIBRARY_NAME ${PROJECT_NAME}lib)
 
+set(WARNINGS "-Wall -Wextra -Werror")
+set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} ${WARNINGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${WARNINGS}")
+
 # Configure build for the main app
 add_subdirectory(./src)
 

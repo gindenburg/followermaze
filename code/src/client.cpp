@@ -72,11 +72,11 @@ void Client::handleError(int hint)
     dispose(hint);
 }
 
-void Client::doHandleInput(int hint)
+void Client::doHandleInput(int /*hint*/)
 {
 }
 
-void Client::doHandleOutput(int hint)
+void Client::doHandleOutput(int /*hint*/)
 {
 }
 
@@ -98,7 +98,7 @@ Admin::~Admin()
     Logger::getInstance().info("Admin disconnected.");
 }
 
-void Admin::doHandleInput(int hint)
+void Admin::doHandleInput(int /*hint*/)
 {
     string command(m_connection->receive());
 
