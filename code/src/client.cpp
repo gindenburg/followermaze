@@ -10,8 +10,8 @@ Client::~Client()
 {
 }
 
-Client::Client(auto_ptr<Connection> conn, Reactor &reactor) :
-    m_connection(conn),
+Client::Client(auto_ptr<Connection> connection, Reactor &reactor) :
+    m_connection(connection),
     m_reactor(reactor)
 {
     assert(m_connection.get() != NULL);
@@ -87,8 +87,8 @@ void Client::dispose(int hint)
     delete this;
 }
 
-Admin::Admin(auto_ptr<Connection> conn, Reactor &reactor) :
-    Client(conn, reactor)
+Admin::Admin(auto_ptr<Connection> connection, Reactor &reactor) :
+    Client(connection, reactor)
 {
     Logger::getInstance().info("Admin connected.");
 }

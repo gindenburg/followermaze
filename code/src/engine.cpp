@@ -20,6 +20,7 @@ Engine::Engine() :
 
 Engine::~Engine()
 {
+    // Dispose of Events
     while (!m_events.empty())
     {
         Event *event = m_events.top();
@@ -27,6 +28,7 @@ Engine::~Engine()
         delete event;
     }
 
+    // Dispose of Users
     for (UserMap::iterator userIt = m_users.begin();
                            userIt != m_users.end();
                            ++userIt)
@@ -68,7 +70,7 @@ void Engine::handleEvents(string& events)
         events.clear();
     }
 
-    // Process events in seqnum order.
+    // Process events in order starting with Parser::FIRST_SEQNUM.
     while (!m_events.empty() && m_events.top()->m_seqnum == m_nextEventSeqnum)
     {
         Event *event = m_events.top();
@@ -119,6 +121,7 @@ long Engine::registerUser(UserClient *userClient, const string& in)
             }
             else
             {
+                // Fisrt time. Create User.
                 user = addNewUser(id);
             }
 
@@ -150,7 +153,7 @@ void Engine::unregisterUser(long id, UserClient *userClient)
             }
         }
 
-        // Cleanup blank users.
+        // Cleanup blank User.
         if (isBlankUser(*user))
         {
             m_users.erase(userIt);
@@ -161,6 +164,7 @@ void Engine::unregisterUser(long id, UserClient *userClient)
 
 void Engine::resetEventQueue()
 {
+    // Dispose of Events.
     while (!m_events.empty())
     {
         Event *event = m_events.top();
@@ -168,8 +172,10 @@ void Engine::resetEventQueue()
         delete event;
     }
 
+    // Reset the expected event to process.
     m_nextEventSeqnum = Parser::FIRST_SEQNUM;
 
+    // Dispose of the Users for which no clients are connected.
     UserMap::iterator userIt = m_users.begin();
     while (userIt != m_users.end())
     {
@@ -197,7 +203,8 @@ void Engine::resetEventQueue()
 void Engine::handleFollow(const Event& event)
 {
     // Notify toUser and make fromUser a follower of toUser.
-    // Register toUser and fromUser if required.
+    // Register toUser and fromUser if required to register the
+    // "follower<->followee" relationship.
     User *toUser = NULL;
     UserMap::const_iterator userIt = m_users.find(event.m_toUserId);
     if (userIt == m_users.end())
@@ -261,7 +268,7 @@ void Engine::handleUnfollow(const Event& event)
 
 void Engine::handleBroadcast(const Event& event)
 {
-    // Notify all connected users.
+    // Notify all connected clients for all Users.
     for (UserMap::const_iterator userIt = m_users.begin();
                                  userIt != m_users.end();
                                  ++userIt)

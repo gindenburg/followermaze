@@ -1,3 +1,5 @@
+/* This class declears the Logger class.
+ */
 #ifndef LOGGER_H
 #define LOGGER_H
 
@@ -9,6 +11,12 @@ using namespace std;
 namespace followermaze
 {
 
+/* Logger is a naive implementation of a logging facility which simply
+ * writes into standard ouput stream.
+ * In a real-world application a mature logging framework (e.g. log4cpp)
+ * should be used.
+ * Logger is a singletone accessed through a class method.
+ */
 class Logger
 {
 public:
@@ -18,10 +26,6 @@ public:
         LvlInfo,
         LvlDebug
     };
-
-    Logger() : m_level(LvlDebug)
-    {
-    }
 
     void setLogLevel(LogLevel level);
 
@@ -41,6 +45,11 @@ public:
     void error(const string &msg, const string &msg1, int err);
 
     static Logger& getInstance();
+
+protected:
+    Logger() : m_level(LvlDebug)
+    {
+    }
 
 protected:
     void message(const char *prefix, const string &msg, const string &msg1, int err = INT_MAX);

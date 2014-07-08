@@ -10,7 +10,6 @@
 namespace followermaze
 {
 
-class Connection;
 class Reactor;
 
 /*

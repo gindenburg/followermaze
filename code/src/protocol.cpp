@@ -14,8 +14,8 @@ namespace protocol
 
 /*----------------------------------------------------------------------------*/
 
-EventSource::EventSource(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor),
+EventSource::EventSource(auto_ptr<Connection> connection, Reactor &reactor, Engine &engine) :
+    Client(connection, reactor),
     m_engine(engine)
 {
     Logger::getInstance().info("EventSource connected.");
@@ -48,8 +48,8 @@ void EventSource::doHandleInput(int hint)
 
 /*----------------------------------------------------------------------------*/
 
-UserClient::UserClient(auto_ptr<Connection> conn, Reactor &reactor, Engine &engine) :
-    Client(conn, reactor),
+UserClient::UserClient(auto_ptr<Connection> connection, Reactor &reactor, Engine &engine) :
+    Client(connection, reactor),
     m_engine(engine),
     m_userId(Parser::INVALID_LONG),
     m_hint(-1)
@@ -122,6 +122,7 @@ const char Parser::TYPE_INVALID;
 
 bool Parser::findMessage(const string &str, size_t &start, string &message)
 {
+    // Find CRLF (any of them)
     size_t pos = str.find_first_of(CRLF, start);
 
     if (pos != string::npos)
@@ -169,7 +170,7 @@ void Parser::parseEvent(Event &event)
     string token;
     unsigned int tokenNum = 0;
 
-    while (getline(ss, token, DELIMITER))
+    while (getline(ss, token, DELIMITER) && tokenNum < 4)
     {
         switch (tokenNum++)
         {
@@ -177,24 +178,15 @@ void Parser::parseEvent(Event &event)
             event.m_seqnum = parseLong(token);
             break;
         case 1:
-            if (token.length() == 1)
-            {
-                char type = token[0];
-                if (type == TYPE_FOLLOW ||
-                    type == TYPE_UNFOLLOW ||
-                    type == TYPE_BROADCAST ||
-                    type == TYPE_PRIVATE ||
-                    type == TYPE_STATUSUPDATE)
-                {
-                    event.m_type = type;
-                }
-                break;
-            }
+            event.m_type = token.empty() ? TYPE_INVALID : token[0];
+            break;
         case 2:
             event.m_fromUserId = parseLong(token);
             break;
         case 3:
             event.m_toUserId = parseLong(token);
+            break;
+        default:
             break;
         }
     }
@@ -230,7 +222,7 @@ bool Parser::isValidEvent(const Event &event)
             return false;
         }
     }
-    else // TYPE_STATUSUPDATE
+    else if (event.m_type == TYPE_STATUSUPDATE)
     {
         if (event.m_fromUserId == INVALID_LONG ||
             event.m_toUserId != INVALID_LONG)
@@ -239,11 +231,16 @@ bool Parser::isValidEvent(const Event &event)
             return false;
         }
     }
+    else
+    {
+        // Unknown type
+        return false;
+    }
 
     return true;
 }
 
-void Parser::encodeMessage(const string& payload, string &message)
+void Parser::encodeMessage(const string &payload, string &message)
 {
     message = payload;
     message.push_back(LF);

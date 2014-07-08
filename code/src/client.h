@@ -5,10 +5,9 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include <memory>
 #include "eventhandler.h"
 #include "connection.h"
-#include <memory>
-#include <string>
 
 namespace followermaze
 {
@@ -25,7 +24,8 @@ class Reactor;
 class Client : public EventHandler
 {
 public:
-    Client(auto_ptr<Connection> conn, Reactor &reactor);
+    // Creates an client. Takes ownership over connection.
+    Client(auto_ptr<Connection> connection, Reactor &reactor);
 
     // Implement EventHandler  interface.
     virtual Handle getHandle();
@@ -59,7 +59,8 @@ protected:
 class Admin : public Client
 {
 public:
-    Admin(auto_ptr<Connection> conn, Reactor &reactor);
+    // Creates an Admin. Takes ownership over connection.
+    Admin(auto_ptr<Connection> connection, Reactor &reactor);
 
 protected:
     // Stop Reactor if received "stop".
@@ -71,11 +72,12 @@ protected:
 };
 
 /*
- * ClientFactory is a template interface which declares a factory method
- * to create EventHandler. ClientType is expected to have a constructor
- * which accepts auto_ptr<Connection> and reference to Reactor.
+ * ClientFactory is a template which declares a factory method to create
+ * objects of type ClientType. ClientType is expected to be derived from
+ * EventHandler, and to have a constructor which accepts auto_ptr<Connection>
+ * and reference to Reactor.
  * This class (or subclasses) must be instantiated to initialize Acceptor.
- * Acceptor will use the instances of this class to create Clients.
+ * Acceptor will use the instances of this class to create clients like Admin.
  */
 template < class ClientType >
 class ClientFactory : public EventHandlerFactory

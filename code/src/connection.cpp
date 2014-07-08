@@ -110,11 +110,6 @@ const char *Connection::receive()
 
 void Connection::send(const string &message)
 {
-    if (message.empty())
-    {
-        return;
-    }
-
     int flags = MSG_NOSIGNAL;
     if (::send(m_handle, message.c_str(), message.length(), flags) < 0)
     {

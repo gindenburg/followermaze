@@ -34,6 +34,7 @@ void Reactor::addHandler(auto_ptr<EventHandler> handler, EventType event)
     int handle = static_cast<int>(handler->getHandle());
     int freeSlot = MAX_FDS;
 
+    // Find a free slot.
     for (unsigned int i = 0; i < MAX_FDS; ++i)
     {
         if (m_pollfds[i].fd < 0)
@@ -44,12 +45,14 @@ void Reactor::addHandler(auto_ptr<EventHandler> handler, EventType event)
 
         if (m_pollfds[i].fd == handle)
         {
+            // Trying to register same handle twice.
             throw Exception(Exception::ErrHandleDuplicate);
         }
     }
 
     if (freeSlot == MAX_FDS)
     {
+        // No more room.
         throw Exception(Exception::ErrBusy);
     }
 
