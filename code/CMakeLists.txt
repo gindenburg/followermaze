@@ -1,8 +1,8 @@
 project(followermaze)
 cmake_minimum_required(VERSION 2.8)
 
-set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
-set(LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib")
+enable_testing()
+
 set(FOLLOWERMAZE_SOURCE_PATH "${PROJECT_SOURCE_DIR}/src")
 set(FOLLOWERMAZE_LIBRARY_NAME ${PROJECT_NAME}lib)
 
@@ -18,3 +18,6 @@ add_subdirectory(./tests/unit)
 
 # Configure build for the test apps
 add_subdirectory(./tests/apps)
+
+# Configure build for the test runner
+add_subdirectory(./tests/runner)

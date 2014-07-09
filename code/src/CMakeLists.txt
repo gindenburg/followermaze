@@ -27,3 +27,7 @@ add_library(${FOLLOWERMAZE_LIBRARY_NAME} ${SRC_LIST})
 
 add_executable(${PROJECT_NAME} main.cpp)
 target_link_libraries(${PROJECT_NAME} ${FOLLOWERMAZE_LIBRARY_NAME})
+
+install(TARGETS ${PROJECT_NAME} DESTINATION bin)
+
+# Testing

@@ -17,6 +17,12 @@ followermaze concerns/TODOs
 followermaze log
 ===============================================================================
 
+09.07.2014
+- added some automated tests using CTest.
+- started to write documentation.
+- surprisingly enough all my guesses from the "concerns" section turned out to
+  be good :-)
+
 07.07.2014
 - back again.
 - implemented Engine to ecapsulate the business logic.
@@ -24,6 +30,7 @@ followermaze log
 - refactored the code.
 - added unit tests for all the significant units.
 - tested with the test suite. fixed a few bugs.
+- commented all the code and did some final refactoring.
 
 25.06.2014
 - back on the project. was busy for a few days.
@@ -72,6 +79,7 @@ become clearer.
  that after receiving Follow(from, to) user "from" becomes a follower of the
  user "to" until receiving Unfollow(from, to). Is this correct?"
 *******************************************************************************
-- will implement in C++ for GNU/Linux
+- will implement in C++ for GNU/Linux. Tough choice considering I'm not allowed
+  to use 3rd party libraries :-)
 - started to think about design
 
