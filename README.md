@@ -46,13 +46,15 @@
 
 4. Installing
 
-  This project's build system has the install targer which installs the followermaze
-  executable to the default (e.g. /usr/local/bin on Linux) location.
+  This project's build system has the install target which installs the 
+  followermaze executable to the default (e.g. /usr/local/bin on Linux) 
+  location.
 
   Example for Ubuntu:
-    $ make install
+    $ sudo make install
 
-  To uninstall one could use 'install_manifest.txt' created in the root build directory.
+  To uninstall one could use 'install_manifest.txt' created in the root build
+  directory.
 
   Example for Ubuntu:
     $ sudo xargs rm < install_manifest.txt
@@ -64,34 +66,37 @@
 7. Testing
   The following testing facilities have been implemented:
 
-  a) Unit tests. Simple unit test framework (UnitTest++) has been used. A target has been
-  added to the build system to run unit tests for every build.
+  a) Unit tests. Simple unit test framework (UnitTest++) has been used. A 
+  target has been added to the build system to run unit tests for every build.
 
   Example for Ubuntu:
     $ make check
 
-  b) Automated tests. The project uses CTest (delivered with CMake) to implement test 
-  automation. Project's build system generates a wrapper shell script which starts the 
-  followermaze server in the background, starts the test application (provided with the 
-  challenge), and finally stops the server. 
+  b) Automated tests. The project uses CTest (delivered with CMake) to 
+  implement test automation. Project's build system generates a wrapper shell 
+  script which starts the followermaze server in the background, starts the 
+  test application (provided with the challenge), and finally stops the server. 
   The tests are defined in ./code/tests/runner/CMakeLists.txt.
   
-  WARNING: one of the tests checks the acceptance criteria for the project (running provided 
-  test application with all default parameters). It can take several minutes to complete.
+  WARNING: one of the tests checks the acceptance criteria for the project 
+  (running provided test application with all default parameters). It can take
+  several minutes to complete.
 
   To display the list of available tests run:
     $ ctest -N
 
-  To execute tests run (test's output is swallowed):
+  To execute tests run (test's output is being swallowed):
     $ make test
 
   To execute tests verbosely run:
     $ ctest -V
 
-  c) Two test applications which have been used during development to test parts of the system 
-  manually are provided as reference implementation and for manual testing. 
+  c) Two test applications which have been used during development to test 
+  parts of the system manually are provided as reference implementation and for
+  manual testing. 
 
-  Note: available tests ensure reasonable quality, but don't provide 100% coverage. In fact no
-  effort has been made to measure test coverage due to the lack of time. This would have to be
-  different if the project required a lengthy maintenance and support cycle.
+  Note: available tests ensure reasonable quality, but don't provide 100% 
+  coverage. In fact no effort has been made to measure test coverage due to the
+  lack of time. This would have to be different if the project required a 
+  lengthy maintenance and support cycle.
 
