@@ -200,25 +200,27 @@ TEST(EventQueue)
 
     protocol::Event event0;
     event0.m_seqnum = 3;
-    eventQueue.push(&event0);
+    eventQueue.push_back(&event0);
 
     protocol::Event event1;
     event1.m_seqnum = 1;
-    eventQueue.push(&event1);
+    eventQueue.push_back(&event1);
 
     protocol::Event event2;
     event2.m_seqnum = 0;
-    eventQueue.push(&event2);
+    eventQueue.push_back(&event2);
 
     protocol::Event event3;
     event3.m_seqnum = 2;
-    eventQueue.push(&event3);
+    eventQueue.push_back(&event3);
+
+    protocol::SortEventQueue(eventQueue);
 
     int i = 0;
     while (!eventQueue.empty())
     {
-        CHECK_EQUAL(eventQueue.top()->m_seqnum, i);
-        eventQueue.pop();
+        CHECK_EQUAL(eventQueue.back()->m_seqnum, i);
+        eventQueue.pop_back();
         i++;
     }
 }

@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <climits>
 #include <sstream>
+#include <algorithm>
 #include "protocol.h"
 #include "reactor.h"
 #include "engine.h"
@@ -105,6 +106,12 @@ void UserClient::reset(int /*hint*/)
     m_userId = Parser::INVALID_LONG;
     m_messageOut.clear();
     m_messageIn.clear();
+}
+
+void SortEventQueue(EventQueue &eventQueue)
+{
+    static Event::order_by_seqnum_descending compare;
+    std::sort(eventQueue.begin(), eventQueue.end(), compare);
 }
 
 /*----------------------------------------------------------------------------*/

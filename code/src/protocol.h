@@ -17,7 +17,7 @@
 #include <string>
 #include <map>
 #include <list>
-#include <queue>
+#include <vector>
 #include "client.h"
 
 using namespace std;
@@ -140,10 +140,11 @@ protected:
     int m_hint;          // cached Reactor hint to notify user outside EventHandler callbacks.
 };
 
-/* EventQueue is a priority queue of events with an event with smallest
- * sequence number on the top.
+/* EventQueue is a vector of events which should be sorted using
+ * order_by_seqnum_ascending to get an event with smallest sequence in the back.
  */
-typedef priority_queue< Event*, vector< Event* >, Event::order_by_seqnum_descending > EventQueue;
+typedef vector< Event* > EventQueue;
+void SortEventQueue(EventQueue &eventQueue);
 
 /* Parser defines followermaze protocol syntax and implements parsing and
  * encoding for the protocol tokens.

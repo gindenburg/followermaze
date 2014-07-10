@@ -84,7 +84,7 @@ void Client::dispose(int hint)
 {
     EventHandler* self = m_reactor.detouchHandler(hint);
     assert(self == (EventHandler*)this);
-    delete this;
+    delete self;
 }
 
 Admin::Admin(auto_ptr<Connection> connection, Reactor &reactor) :

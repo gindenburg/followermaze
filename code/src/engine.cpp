@@ -21,11 +21,9 @@ Engine::Engine() :
 Engine::~Engine()
 {
     // Dispose of Events
-    while (!m_events.empty())
+    for (EventQueue::iterator it = m_events.begin(); it != m_events.end(); ++it)
     {
-        Event *event = m_events.top();
-        m_events.pop();
-        delete event;
+        delete *it;
     }
 
     // Dispose of Users
@@ -53,7 +51,7 @@ void Engine::handleEvents(string& events)
 
         if (Parser::isValidEvent(*event))
         {
-            m_events.push(event.get());
+            m_events.push_back(event.get());
             event.release();
         }
     }
@@ -70,10 +68,12 @@ void Engine::handleEvents(string& events)
         events.clear();
     }
 
+    SortEventQueue(m_events);
+
     // Process events in order starting with Parser::FIRST_SEQNUM.
-    while (!m_events.empty() && m_events.top()->m_seqnum == m_nextEventSeqnum)
-    {
-        Event *event = m_events.top();
+    while (!m_events.empty() && m_events.back()->m_seqnum == m_nextEventSeqnum)
+    {        
+        Event *event = m_events.back();
 
         switch (event->m_type)
         {
@@ -97,7 +97,7 @@ void Engine::handleEvents(string& events)
             assert(0);
         }
 
-        m_events.pop();
+        m_events.pop_back();
         m_nextEventSeqnum++;
         delete event;
     }
@@ -165,11 +165,10 @@ void Engine::unregisterUser(long id, UserClient *userClient)
 void Engine::resetEventQueue()
 {
     // Dispose of Events.
-    while (!m_events.empty())
+    // Dispose of Events
+    for (EventQueue::iterator it = m_events.begin(); it != m_events.end(); ++it)
     {
-        Event *event = m_events.top();
-        m_events.pop();
-        delete event;
+        delete *it;
     }
 
     // Reset the expected event to process.

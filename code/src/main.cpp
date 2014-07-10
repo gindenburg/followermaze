@@ -145,8 +145,7 @@ int main(int argc, char *argv[])
     if (config.m_stop)
     {
         static const char *STOP_COMMAND = "echo stop | nc localhost 9999";
-        system(STOP_COMMAND);
-        return 0;
+        return system(STOP_COMMAND);
     }
 
     try
