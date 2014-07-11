@@ -14,8 +14,20 @@ followermaze concerns/TODOs
   - CRLF is NOT implemented as '\r\n' by the test suite despite what the spec
     says. Oh well. Not too bad.
 
+- parsing performance is terrible (i'm blaming std::stringstream and 
+  std::getline and callgrind is agreeing with me). Maybe fix it for the 
+  next version :-)
+
 followermaze log
 ===============================================================================
+
+10.07.2014
+- did performance tests.
+- replaced priority_queue with vector.
+- finished documentation
+- released version 1.0.
+- done.
+- going on vacation.
 
 09.07.2014
 - added some automated tests using CTest.
