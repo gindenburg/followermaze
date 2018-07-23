@@ -1,27 +1,21 @@
 # README followermaze - the challenge
 
-1. Prerequisites
-2. Project structure
-3. Building
-4. Installing
-5. Architecture design
-6. Performance
-7. Testing
 
-1. Prerequisites
+## Prerequisites
 
- This project requires:
-  * Cross-platform Make (CMake) v2.8.12+
-  * GNU Make or equivalent.
-  * GCC or an alternative, reasonably conforming C++ compiler.
-  * UnitTest++ (http://unittest-cpp.sourceforge.net/)
+This project requires:
+ * Cross-platform Make (CMake) v2.8.12+
+ * GNU Make or equivalent.
+ * GCC or an alternative, reasonably conforming C++ compiler.
+ * UnitTest++ (http://unittest-cpp.sourceforge.net/)
 
-  Example for Ubuntu:
+Example for Ubuntu:
     $ sudo apt-get install build-essential
     $ sudo apt-get install cmake
     $ sudo apt-get install libunittest++-dev
 
-2. Project structure
+## Project structure
+
   ./README               - this document
   ./blog.md              - project log
   ./spec/instructions.md - project specification
@@ -31,47 +25,47 @@
   ./code/tests/apps      - test applications
   ./code/tests/runner    - wrapper template for the automated test
  
-3. Building
+## How to build
 
-  This project uses the Cross-platform Make (CMake) build system.
-  Out of source build is recommended.
+This project uses the Cross-platform Make (CMake) build system.
+Out of source build is recommended.
 
-  Example for Ubuntu (assuming current directory is the project root directory):
+Example for Ubuntu (assuming current directory is the project root directory):
     $ mkdir build
     $ cd build
     $ cmake ../code
     $ make
 
-4. Installing
+## How to install
 
-  This project's build system has the install target which installs the
-  followermaze executable to the default (e.g. /usr/local/bin on Linux)
-  location.
+This project's build system has the install target which installs the
+followermaze executable to the default (e.g. /usr/local/bin on Linux)
+location.
 
-  Example for Ubuntu:
+Example for Ubuntu:
     $ sudo make install
 
-  To uninstall one could use 'install_manifest.txt' created in the root build
-  directory.
+To uninstall one could use 'install_manifest.txt' created in the root build
+directory.
 
-  Example for Ubuntu:
+Example for Ubuntu:
     $ sudo xargs rm < install_manifest.txt
 
-  To get help on how to use followermaze run:
+To get help on how to use followermaze run:
     $ followermaze -h
 
-  WARNING: followermaze has a hard-coded limit (1024) on number of connected
-  clients. See Performance section for more information on that.
+WARNING: followermaze has a hard-coded limit (1024) on number of connected
+clients. See Performance section for more information on that.
 
-5. Architecture design
-  The following design concerns have been identified:
+## Architecture design
+The following design concerns have been identified:
   - Portability
   - Performance
   - Scalability
   - Testability
 
-  The following design decisions have been taken to address the concerns or
-  to enable future improvements:
+The following design decisions have been taken to address the concerns or
+to enable future improvements:
   - Focus on separation of concerns. The essential subsystems (stream sockets,
     network I/O handling, object model of the problem domain, protocol parser,
     and business logic) should be isolated in parallel class hierarchies and
@@ -98,8 +92,8 @@
         Portability and Testability.
     This addresses Performance, Scalability, and Testability.
  
-  The following classes and collaborations :
-  Framework:
+The following classes and collaborations :
+Framework:
   - Connection - facade wrapper for stream sockets. Owns an I/O Handle.
   - EventHandler - abstract class defining the call back interface for handling
     I/O events on a resource represented by a Handle.
@@ -118,7 +112,7 @@
   - Server - implements Reactor based event loop.
   - Logger, BaseException - tools for logging and exception handling.
  
-  followermaze application logic:
+followermaze application logic:
   - Event - an event which is sent by the *event source*.
   - User - represent a user. Tracks user's followers, followees, and *user clients*.
   - EventQueue - a vector of Events which is sorted so that the Event with lowest
@@ -140,35 +134,34 @@
          'echo' and 'nc' so it's a bit of a hack :-)
        - error handling.
 
-  NOTE: This design doesn't address all the concerns fully. Some of the design
-  decisions have not been fully implemented in favour of development speed.
+NOTE: This design doesn't address all the concerns fully. Some of the design
+decisions have not been fully implemented in favour of development speed.
 
-6. Performance
-  Derived from the specification essential non-functional requirements for the
-  followermaze application are:
+## Performance
+Derived from the specification essential non-functional requirements for the
+followermaze application are:
   - *user client* shouldn't time out (the default timeout is 20 sec).
   - followermaze should be able to handle arbitrary number of events.
 
-  The following parameters mostly affect followermaze's performance:
-  - **maxEventSourceBatchSize**
-   
+The following parameters mostly affect followermaze's performance:
+  - **maxEventSourceBatchSize**   
     Events are supposed to be delivered in order so they must be sorted before
-    the application can start notifying users. This assumes logarithmic
-    complexity.
+the application can start notifying users. This assumes logarithmic
+complexity.
    
-    Events need to be parsed which assumes linear complexity.
-    In order to be sorted all (worst case) events in a batch have to be stored
-    in memory.
+Events need to be parsed which assumes linear complexity.
+In order to be sorted all (worst case) events in a batch have to be stored
+in memory.
    
-    Consequently, it's always possible to choose a value for this parameter
-    which would force the application run out of memory or become so slow that
-    the clients would start to time out.   
+Consequently, it's always possible to choose a value for this parameter
+which would force the application run out of memory or become so slow that
+the clients would start to time out.   
    
-    followermaze uses sorted vector to store events. Sorting has logarithmic
-    complexity.
+followermaze uses sorted vector to store events. Sorting has logarithmic
+complexity.
 
-    followermaze iterates over the list of events to process them so
-    the overall handling is linear.
+followermaze iterates over the list of events to process them so
+the overall handling is linear.
    
     This should have very noticable effect on performance.
    
@@ -238,7 +231,7 @@
   std::stringstream and std::getline are used for the sake of development speed
   and code readability. Should be possible to do it better.
 
-7. Testing
+## Testing
   The following testing facilities have been implemented:
 
   a) Unit tests. Simple unit test framework (UnitTest++) has been used. A
