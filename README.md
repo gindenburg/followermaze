@@ -1,14 +1,12 @@
-===============================================================================
-================= README == followermaze - the challenge ======================
-===============================================================================
+# README followermaze - the challenge
 
- 1.) Prerequisites
- 2.) Project structure
- 3.) Building
- 4.) Installing
- 5.) Architecture design
- 6.) Performance
- 7.) Testing
+1. Prerequisites
+2. Project structure
+3. Building
+4. Installing
+5. Architecture design
+6. Performance
+7. Testing
 
 1. Prerequisites
 
