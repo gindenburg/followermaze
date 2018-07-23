@@ -17,15 +17,15 @@ Example for Ubuntu:
 
 ## Project structure
 
-./README                         - this document
-./blog.md                          - project log
-./spec/instructions.md      - project specification
-./testsuite                          - test application provided by the customer
-./code/src                         - source code
-./code/tests/unit               - unit tests
-./code/tests/apps             - test applications
-./code/tests/runner           - wrapper template for the automated test
- 
+./README                         - this document  
+./blog.md                          - project log  
+./spec/instructions.md      - project specification  
+./testsuite                          - test application provided by the customer  
+./code/src                         - source code  
+./code/tests/unit               - unit tests  
+./code/tests/apps             - test applications  
+./code/tests/runner           - wrapper template for the automated test  
+
 ## How to build
 
 This project uses the Cross-platform Make (CMake) build system.
@@ -64,11 +64,8 @@ clients. See Performance section for more information on that.
 
 ## Architecture design
 
-The following design concerns have been identified:
-- Portability
-- Performance
-- Scalability
-- Testability
+The following design concerns have been identified: **Portability**, **Performance**,
+**Scalability**, **Testability**
   
 The following design decisions have been taken to address the concerns or
 to enable future improvements:
@@ -98,47 +95,47 @@ to enable future improvements:
         Portability and Testability.
     This addresses Performance, Scalability, and Testability.
  
-The following classes and collaborations :
+The following classes and collaborations:  
 Framework:
--   Connection - facade wrapper for stream sockets. Owns an I/O Handle.
--   EventHandler - abstract class defining the call back interface for handling
-    I/O events on a resource represented by a Handle.
--   EventHandlerFactory - base factory used to instantiate EventHadlers.
--   Client - EventHandler specialization which encapsulates a Connection and
-    implements the common logic (error handling and cleanup) for Connection based
+-   `Connection` - facade wrapper for stream sockets. Owns an I/O Handle.
+-   `EventHandler` - abstract class defining the call back interface for handling
+    I/O events on a resource represented by a `Handle`.
+-   `EventHandlerFactory` - base factory used to instantiate `EventHadlers`.
+-   `Client` - `EventHandler` specialization which encapsulates a `Connection` and
+    implements the common logic (error handling and cleanup) for `Connection` based
     handlers.
--   Admin - Client specialization which is used to interrupt the main event
+-   `Admin` - `Client` specialization which is used to interrupt the main event
     loop from another process.
--   Acceptor - EventHandler which owns a listening (server) Connection, accepts
+-   `Acceptor` - `EventHandler` which owns a listening (server) `Connection`, accepts
     client connection requests and creates appropriate clients using concrete
-    EventHandlerFactory.
--   Reactor - implements poll based synchronous event demultiplexing and
-    dispatching of events to the appropriate EventHandlers. Reactor also owns all
-    EventHandlers in the system and makes sure they are disposed of.
--   Server - implements Reactor based event loop.
--   Logger, BaseException - tools for logging and exception handling.
+    `EventHandlerFactory`.
+-   `Reactor` - implements poll based synchronous event demultiplexing and
+    dispatching of events to the appropriate `EventHandlers`. `Reactor` also owns all
+    `EventHandlers` in the system and makes sure they are disposed of.
+-   `Server` - implements `Reactor` based event loop.
+-   `Logger`, `BaseException` - tools for logging and exception handling.
  
-followermaze application logic:
-  - Event - an event which is sent by the *event source*.
-  - User - represent a user. Tracks user's followers, followees, and *user clients*.
-  - EventQueue - a vector of Events which is sorted so that the Event with lowest
+followermaze application logic:  
+-   `Event` - an event which is sent by the *event source*.
+-   `User` - represent a user. Tracks user's followers, followees, and *user clients*.
+-   `EventQueue` - a vector of Events which is sorted so that the Event with lowest
     sequence number is in the back.
-  - EventSource - Client representing *event source*
-  - UserClient - Client representing *user client*
-  - Parser - implements application protocol parser
-  - Engine - implements business logic (handling of *user clients*, event
+-   `EventSource` - `Client` representing *event source*
+-   `UserClient` - `Client` representing *user client*
+-   `Parser` - implements application protocol parser
+-   `Engine` - implements business logic (handling of *user clients*, event
     processing rules). Engine owns all the domain data model objects and makes
     sure they are disposed of.
-  - EngineDrivenClientFactory - concrete factory to create clients which use
-    Engine for business logic (that is EventSource and UserClient).
-  - SimpleServer - a Server which implements followermaze application logic.
+-   `EngineDrivenClientFactory` - concrete factory to create clients which use
+    `Engine` for business logic (that is `EventSource` and `UserClient`).
+-   `SimpleServer` - a `Server` which implements followermaze application logic.
     This includes:
-       - server configuration (via CLI).
-       - create required Acceptors (for Admin, EventSource, and UserClient) to
-         seed the Reactor.
-       - server shut down using Admin (via CLI). This uses system() call to
-         'echo' and 'nc' so it's a bit of a hack :-)
-       - error handling.
+    -   server configuration (via CLI).
+    -   create required `Acceptors` (for `Admin`, `EventSource`, and `UserClient`) to
+        seed the `Reactor`.
+    -   server shut down using `Admin` (via CLI). This uses system() call to
+        `echo` and `nc` so it's a bit of a hack :-)
+    -   error handling.
   
 NOTE: This design doesn't address all the concerns fully. Some of the design
 decisions have not been fully implemented in favour of development speed.
