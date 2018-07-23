@@ -148,7 +148,7 @@ followermaze application are:
 -   followermaze should be able to handle arbitrary number of events.
 
 The following parameters mostly affect followermaze's performance:
--   **maxEventSourceBatchSize**   
+-   **maxEventSourceBatchSize**  
     Events are supposed to be delivered in order so they must be sorted before
     the application can start notifying users. This assumes logarithmic
     complexity.
@@ -169,11 +169,11 @@ The following parameters mostly affect followermaze's performance:
     
     This should have very noticable effect on performance.
     
--   **totalEvents**
+-   **totalEvents**  
     This should not affect followermaze's performance (unless there is a memory
     management bug) since it only deals with one batch at a time.
 
--   **concurrencyLevel**
+-   **concurrencyLevel**  
     followermaze calls poll and iterates the file descriptors to demultiplex the
     I/O events. This assumes linear complexity.
     
@@ -196,7 +196,7 @@ The following parameters mostly affect followermaze's performance:
     unlikely to significantly affect the system (unless pushed to multiple
     thousands when the above mentioned factors will start to be noticed).
     
--   **numberOfUsers**
+-   **numberOfUsers**  
     followermaze tracks the follower<->followee relationship for the users. It can
     happen that this relationship is mentioned in the event stream even though the
     participating users are not connected. This means that in the worst case
